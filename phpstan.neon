@@ -2,15 +2,12 @@ parameters:
     level: 8
     paths:
         - includes/
-        - aether-site-exporter.php
+        - aether-site-exporter-providers.php
     bootstrapFiles:
-        - aether-site-exporter.php
-        - phpstan-stubs.php
+        - aether-site-exporter-providers.php
     excludePaths:
         - vendor/
-        - tests/
     # Ignore WordPress core file require errors - PHPStan cannot verify
     # dynamic paths with ABSPATH constant at analysis time
     ignoreErrors:
         - '#Method.*has parameter \$request with generic class WP_REST_Request but does not specify its types#'
-        - '#Call to function is_string\(\) with string will always evaluate to true\.#'
