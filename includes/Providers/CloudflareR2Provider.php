@@ -225,6 +225,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'text',
 				'label' => \__('Region (Optional)', 'aether-site-exporter-providers'),
 				'name' => 'region',
+				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					if (empty($value)) {
 						return '';
@@ -251,6 +252,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'url',
 				'label' => \__('Endpoint URL (Optional)', 'aether-site-exporter-providers'),
 				'name' => 'endpoint',
+				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					if (empty($value)) {
 						return '';
@@ -277,6 +279,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'url',
 				'label' => \__('Worker Endpoint URL', 'aether-site-exporter-providers'),
 				'name' => 'worker_endpoint',
+				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					if (empty($value)) {
 						return '';
@@ -303,6 +306,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'url',
 				'label' => \__('Custom Domain (Optional)', 'aether-site-exporter-providers'),
 				'name' => 'custom_domain',
+				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					if (empty($value)) {
 						return '';
@@ -329,6 +333,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'checkbox',
 				'label' => \__('Enable Public Access', 'aether-site-exporter-providers'),
 				'name' => 'public_access',
+				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					return (bool) $value;
 				},
