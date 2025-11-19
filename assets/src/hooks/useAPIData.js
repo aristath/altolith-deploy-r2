@@ -119,6 +119,8 @@ export function useAPIData( {
 			}
 			abortControllerRef.current = null;
 		}
+		// Note: transform, onSuccess, and onError are intentionally excluded from deps
+		// to avoid unnecessary re-renders. They should be memoized by the caller if needed.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ path, ...dependencies ] );
 

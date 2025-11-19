@@ -240,9 +240,10 @@ export function DevTools() {
 
 /**
  * Contexts Tab - Display context state
- * @param root0
- * @param root0.configContext
- * @param root0.providerContext
+ *
+ * @param {Object} props                 Component props
+ * @param {Object} props.configContext   Config context object
+ * @param {Object} props.providerContext Provider context object
  */
 function ContextsTab( { configContext, providerContext } ) {
 	return (
@@ -275,8 +276,9 @@ function ContextsTab( { configContext, providerContext } ) {
 
 /**
  * API Tab - Display API call logs
- * @param root0
- * @param root0.apiLogs
+ *
+ * @param {Object} props         Component props
+ * @param {Array}  props.apiLogs Array of API log entries
  */
 function ApiTab( { apiLogs } ) {
 	return (
@@ -368,8 +370,9 @@ function ApiTab( { apiLogs } ) {
 
 /**
  * Performance Tab - Display performance metrics
- * @param root0
- * @param root0.apiLogs
+ *
+ * @param {Object} props         Component props
+ * @param {Array}  props.apiLogs Array of API log entries
  */
 function PerformanceTab( { apiLogs } ) {
 	const stats = apiLogs.reduce(
@@ -442,9 +445,10 @@ function PerformanceTab( { apiLogs } ) {
 
 /**
  * Section Component
- * @param root0
- * @param root0.title
- * @param root0.children
+ *
+ * @param {Object} props          Component props
+ * @param {string} props.title    Section title
+ * @param {*}      props.children Section content
  */
 function Section( { title, children } ) {
 	return (
@@ -470,10 +474,11 @@ function Section( { title, children } ) {
 
 /**
  * Key-Value Component
- * @param root0
- * @param root0.label
- * @param root0.value
- * @param root0.isCode
+ *
+ * @param {Object}                props        Component props
+ * @param {string}                props.label  Label text
+ * @param {string|number|boolean} props.value  Value to display
+ * @param {boolean}               props.isCode Whether to render value as code
  */
 function KeyValue( { label, value, isCode = false } ) {
 	return (
@@ -519,7 +524,8 @@ function KeyValue( { label, value, isCode = false } ) {
 
 /**
  * Format bytes to human-readable size
- * @param bytes
+ * @param {number} bytes Number of bytes
+ * @return {string} Formatted size string
  */
 function formatBytes( bytes ) {
 	if ( bytes === 0 ) {

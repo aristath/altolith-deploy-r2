@@ -100,7 +100,7 @@ export function ProviderSettings( { provider, onSave } ) {
 
 	/**
 	 * Handle form submission
-	 * @param event
+	 * @param {Event} event Form submission event
 	 */
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
