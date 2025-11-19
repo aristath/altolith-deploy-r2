@@ -18,53 +18,15 @@ import {
 	attachCustomDomain,
 	removeCustomDomain,
 } from '../../utils/cloudflareWorkersApi';
-
-// Import from parent plugin's SDK (exposed as window.AetherProviderSDK)
-// Access SDK lazily to avoid issues if SDK hasn't loaded yet
-function getSDK() {
-	if ( typeof window === 'undefined' || ! window.AetherProviderSDK ) {
-		return null;
-	}
-	return window.AetherProviderSDK;
-}
-
-function getAbstractProvider() {
-	const SDK = getSDK();
-	if ( SDK && SDK.AbstractProvider && typeof SDK.AbstractProvider === 'function' ) {
-		return SDK.AbstractProvider;
-	}
-	// Return a placeholder class - this prevents "superclass is not a constructor" error
-	return class {
-		constructor() {
-			throw new Error(
-				'AetherProviderSDK.AbstractProvider is not available. ' +
-				'Make sure the parent plugin (aether-site-exporter) is active and the SDK has loaded.'
-			);
-		}
-	};
-}
-
-function getConfigFieldBuilder() {
-	const SDK = getSDK();
-	return SDK?.ConfigFieldBuilder || null;
-}
-
-function getDeploymentTypes() {
-	const SDK = getSDK();
-	return SDK?.DEPLOYMENT_TYPES || {};
-}
-
-// Get these at module load time with fallbacks
-const SDK = getSDK();
-const ConfigFieldBuilder = getConfigFieldBuilder();
-const DEPLOYMENT_TYPES = getDeploymentTypes();
+import { AbstractProvider } from '@aether/base/providers/base/AbstractProvider';
+import { DEPLOYMENT_TYPES } from '@aether/base/constants/deploymentTypes';
 
 /**
  * CloudflareWorkersProvider class
  *
  * Provides Cloudflare Workers edge computing platform integration.
  */
-export class CloudflareWorkersProvider extends getAbstractProvider() {
+export class CloudflareWorkersProvider extends AbstractProvider {
 	/**
 	 * Provider ID constant.
 	 *
@@ -80,8 +42,7 @@ export class CloudflareWorkersProvider extends getAbstractProvider() {
 	 * @return {Array<string>} Supported deployment types
 	 */
 	getSupportedDeploymentTypes() {
-		const types = getDeploymentTypes();
-		return [ types.EDGE_FUNCTIONS ];
+		return [ DEPLOYMENT_TYPES.EDGE_FUNCTIONS ];
 	}
 
 	/**
@@ -153,48 +114,14 @@ export class CloudflareWorkersProvider extends getAbstractProvider() {
 	/**
 	 * Get provider-specific configuration fields.
 	 *
-	 * Note: The deployment_types field is automatically added by AbstractProvider.getConfigFields()
+	 * Settings are now handled by PHP via BaseProvider.getSettings().
+	 * This method returns an empty array since JavaScript no longer defines fields.
 	 *
-	 * @return {Array<Object>} Array of field definitions
+	 * @return {Array<Object>} Empty array (settings handled by PHP)
 	 */
 	getProviderSpecificConfigFields() {
-		const builder = getConfigFieldBuilder();
-		if ( ! builder ) {
-			throw new Error(
-				'ConfigFieldBuilder is not available. Make sure AetherProviderSDK is loaded.'
-			);
-		}
-		return builder.buildAll( [
-			builder.text( 'account_id' )
-				.label( __( 'Account ID', 'aether' ) )
-				.description(
-					__(
-						'Your Cloudflare account ID (found in Workers dashboard)',
-						'aether'
-					)
-				)
-				.required()
-				.pattern(
-					'^[a-f0-9]{32}$',
-					__(
-						'Account ID must be a 32-character hexadecimal string',
-						'aether'
-					)
-				)
-				.sensitive(),
-
-			builder.password( 'api_token' )
-				.label( __( 'API Token', 'aether' ) )
-				.description(
-					__(
-						'Cloudflare API token with Workers permissions',
-						'aether'
-					)
-				)
-				.required()
-				.sensitive()
-				.min( 20 ),
-		] );
+		// Settings are handled by PHP, not JavaScript
+		return [];
 	}
 
 	/**

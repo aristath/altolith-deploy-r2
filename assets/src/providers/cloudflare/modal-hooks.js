@@ -7,22 +7,24 @@
  * @package
  */
 
-import { useState } from '@wordpress/element';
-import { render, unmountComponentAtNode } from '@wordpress/element';
+import { useState, createRoot } from '@wordpress/element';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addAction } from '@wordpress/hooks';
-import { provider } from './index';
+// Import provider instance (created in index.js but not exported)
+// We'll create our own instance here
+import { CloudflareWorkersProvider } from './CloudflareWorkersProvider';
+
+const provider = new CloudflareWorkersProvider();
 
 /**
  * Deploy Worker button component.
  *
- * @param {Object} props Component props.
- * @param {string} props.providerId Provider ID.
+ * @param {Object} props        Component props.
  * @param {Object} props.config Current provider configuration (form values).
  * @return {JSX.Element} Deploy Worker button.
  */
-function DeployWorkerButton( { providerId, config } ) {
+function DeployWorkerButton( { config } ) {
 	const [ deploying, setDeploying ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ success, setSuccess ] = useState( false );
@@ -49,8 +51,6 @@ function DeployWorkerButton( { providerId, config } ) {
 			}
 
 			// Set provider config from form values (temporarily for this deployment)
-			// Save original config to restore later if needed
-			const originalConfig = { ...provider.config };
 			provider.config = { ...config };
 
 			// Fetch worker script from REST API
@@ -59,9 +59,7 @@ function DeployWorkerButton( { providerId, config } ) {
 			let script = '';
 			try {
 				// Get the REST API base URL
-				const restUrl =
-					window.wpApiSettings?.root ||
-					'/wp-json';
+				const restUrl = window.wpApiSettings?.root || '/wp-json';
 				const endpoint = `${ restUrl }/aether/site-exporter/providers/worker-scripts/${ workerType }`;
 
 				// Get nonce for authentication
@@ -107,26 +105,15 @@ function DeployWorkerButton( { providerId, config } ) {
 			}
 
 			// Prepare worker bindings based on configuration
-			// Note: prepareWorkerEnvironment returns env vars, but we need bindings format
-			// For now, we'll pass empty bindings since Cloudflare Workers provider
+			// For now, pass empty bindings since Cloudflare Workers provider
 			// doesn't have bucket configuration (that comes from storage providers)
-			const envVars = provider.prepareWorkerEnvironment(
-				workerType,
-				config
-			);
-
-			// Convert environment variables to bindings format if needed
-			// For R2 workers, we'd need bucket_name from storage provider config
-			// For now, pass empty bindings for basic worker deployment
 			const bindings = {};
 
 			// Generate worker name
 			const workerName = provider.generateWorkerName( workerType );
 
 			// Deploy worker using server-side REST API endpoint (avoids CORS issues)
-			const restUrl =
-				window.wpApiSettings?.root ||
-				'/wp-json';
+			const restUrl = window.wpApiSettings?.root || '/wp-json';
 			const endpoint = `${ restUrl }/aether/site-exporter/providers/cloudflare/deploy-worker`;
 
 			// Get nonce for authentication
@@ -146,8 +133,8 @@ function DeployWorkerButton( { providerId, config } ) {
 				body: JSON.stringify( {
 					worker_type: workerType,
 					worker_name: workerName,
-					script: script,
-					bindings: bindings,
+					script,
+					bindings,
 					account_id: config.account_id,
 					api_token: config.api_token,
 				} ),
@@ -206,10 +193,6 @@ function DeployWorkerButton( { providerId, config } ) {
 		borderTop: '1px solid #ddd',
 	};
 
-	const buttonStyle = {
-		marginTop: '0.5rem',
-	};
-
 	return (
 		<div style={ containerStyle }>
 			<Button
@@ -217,9 +200,7 @@ function DeployWorkerButton( { providerId, config } ) {
 				onClick={ handleDeploy }
 				isBusy={ deploying }
 				disabled={
-					deploying ||
-					! config?.api_token ||
-					! config?.account_id
+					deploying || ! config?.api_token || ! config?.account_id
 				}
 			>
 				{ deploying
@@ -250,7 +231,10 @@ function DeployWorkerButton( { providerId, config } ) {
 					{ workerUrl && (
 						<div style={ { marginTop: '0.5rem' } }>
 							<strong>
-								{ __( 'Worker URL:', 'aether-site-exporter-providers' ) }
+								{ __(
+									'Worker URL:',
+									'aether-site-exporter-providers'
+								) }
 							</strong>{ ' ' }
 							<a
 								href={ workerUrl }
@@ -267,8 +251,9 @@ function DeployWorkerButton( { providerId, config } ) {
 	);
 }
 
-// Store root elements for cleanup
-const rootElements = new Map();
+// Store React roots and container elements for cleanup
+const reactRoots = new Map();
+const rootContainers = new Map();
 
 /**
  * Initialize modal hooks for Cloudflare Workers provider.
@@ -294,33 +279,34 @@ export function initCloudflareModalHooks() {
 			}
 
 			// Clean up previous render if it exists
-			const existingRoot = rootElements.get( context.providerId );
+			const existingRoot = reactRoots.get( context.providerId );
+			const existingContainer = rootContainers.get( context.providerId );
 			if ( existingRoot ) {
 				// Unmount previous React component
 				try {
-					unmountComponentAtNode( existingRoot );
+					existingRoot.unmount();
 				} catch ( e ) {
 					// If unmount fails, just remove the element
-					if ( existingRoot.parentNode ) {
-						existingRoot.parentNode.removeChild( existingRoot );
+					if ( existingContainer && existingContainer.parentNode ) {
+						existingContainer.parentNode.removeChild(
+							existingContainer
+						);
 					}
 				}
-				rootElements.delete( context.providerId );
+				reactRoots.delete( context.providerId );
+				rootContainers.delete( context.providerId );
 			}
 
 			// Create a new root element for this render
-			const root = document.createElement( 'div' );
-			container.appendChild( root );
-			rootElements.set( context.providerId, root );
+			const rootElement = document.createElement( 'div' );
+			container.appendChild( rootElement );
 
-			// Render the Deploy Worker button
-			render(
-				<DeployWorkerButton
-					providerId={ context.providerId }
-					config={ context.values }
-				/>,
-				root
-			);
+			// Create React 18 root and render
+			const root = createRoot( rootElement );
+			reactRoots.set( context.providerId, root );
+			rootContainers.set( context.providerId, rootElement );
+
+			root.render( <DeployWorkerButton config={ context.values } /> );
 		}
 	);
 }

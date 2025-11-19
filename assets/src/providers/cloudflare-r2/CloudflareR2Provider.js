@@ -10,25 +10,8 @@
 import { __ } from '@wordpress/i18n';
 import { AbstractAWSProvider } from '../aws/AbstractAWSProvider';
 import { EdgeService } from '../services/edgeService';
-
-// Import from parent plugin's SDK (exposed as window.AetherProviderSDK)
-// Access SDK lazily to avoid issues if SDK hasn't loaded yet
-function getSDK() {
-	if ( typeof window === 'undefined' || ! window.AetherProviderSDK ) {
-		return null;
-	}
-	return window.AetherProviderSDK;
-}
-
-function getConfigFieldBuilder() {
-	const SDK = getSDK();
-	return SDK?.ConfigFieldBuilder || null;
-}
-
-function getDeploymentTypes() {
-	const SDK = getSDK();
-	return SDK?.DEPLOYMENT_TYPES || {};
-}
+import { DEPLOYMENT_TYPES } from '@aether/base/constants/deploymentTypes';
+import apiFetch from '../../utils/api';
 
 /**
  * CloudflareR2Provider class
@@ -53,10 +36,9 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 	 * @return {Array<string>} Supported deployment types
 	 */
 	getSupportedDeploymentTypes() {
-		const types = getDeploymentTypes();
 		return [
-			types.STATIC_SITE,
-			types.BLUEPRINT_BUNDLE,
+			DEPLOYMENT_TYPES.STATIC_SITE,
+			DEPLOYMENT_TYPES.BLUEPRINT_BUNDLE,
 		];
 	}
 
@@ -139,78 +121,14 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 	/**
 	 * Get provider-specific configuration fields.
 	 *
-	 * Includes common S3 fields from AbstractAWSProvider plus R2-specific fields.
+	 * Settings are now handled by PHP via BaseProvider.getSettings().
+	 * This method returns an empty array since JavaScript no longer defines fields.
 	 *
-	 * Note: The deployment_types field is automatically added by AbstractProvider.getConfigFields()
-	 *
-	 * @return {Array<Object>} Array of field definitions
+	 * @return {Array<Object>} Empty array (settings handled by PHP)
 	 */
 	getProviderSpecificConfigFields() {
-		// Get base S3 fields from AbstractAWSProvider (already built)
-		const baseFields = super.getProviderSpecificConfigFields();
-
-		// Add R2-specific fields
-		const builder = getConfigFieldBuilder();
-		if ( ! builder ) {
-			throw new Error(
-				'ConfigFieldBuilder is not available. Make sure AetherProviderSDK is loaded.'
-			);
-		}
-		const r2Fields = builder.buildAll( [
-			builder.text( 'cloudflare_account_id' )
-				.label( __( 'Cloudflare Account ID', 'aether' ) )
-				.description(
-					__(
-						'Your Cloudflare account ID (found in R2 dashboard)',
-						'aether'
-					)
-				)
-				.required()
-				.pattern(
-					'^[a-f0-9]{32}$',
-					__(
-						'Account ID must be a 32-character hexadecimal string',
-						'aether'
-					)
-				)
-				.sensitive(),
-
-			builder.url( 'worker_endpoint' )
-				.label( __( 'Worker Endpoint URL', 'aether' ) )
-				.description(
-					__(
-						'Deployed Cloudflare Worker endpoint for upload proxy (auto-populated after deployment)',
-						'aether'
-					)
-				),
-
-			builder.url( 'custom_domain' )
-				.label( __( 'Custom Domain (Optional)', 'aether' ) )
-				.description(
-					__(
-						'Custom domain for R2 bucket access (e.g., https://cdn.example.com)',
-						'aether'
-					)
-				),
-
-			builder.checkbox( 'public_access' )
-				.label( __( 'Enable Public Access', 'aether' ) )
-				.description(
-					__(
-						'Allow public read access to bucket contents',
-						'aether'
-					)
-				)
-				.default( false ),
-		] );
-
-		// Combine base fields and R2-specific fields
-		// Put cloudflare_account_id first, then base fields, then other R2 fields
-		return [
-			r2Fields[ 0 ], // cloudflare_account_id
-			...baseFields, // access_key_id, secret_access_key, bucket_name, region, endpoint
-			...r2Fields.slice( 1 ), // worker_endpoint, custom_domain, public_access
-		];
+		// Settings are handled by PHP, not JavaScript
+		return [];
 	}
 
 	/**
@@ -231,6 +149,9 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 	/**
 	 * Get edge service instance (lazy-loaded).
 	 *
+	 * Gets Cloudflare account ID and API token from the edge provider (cloudflare),
+	 * not from R2 provider's own config, since those credentials are managed by the edge provider.
+	 *
 	 * @protected
 	 * @return {Promise<EdgeService|null>} Edge service instance
 	 */
@@ -239,17 +160,25 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 			return this.edgeService;
 		}
 
+		// Get R2 provider config for storage settings
 		const config = await this.getConfig();
 
-		if ( ! config.cloudflare_account_id || ! config.access_key_id ) {
+		// Get edge provider (cloudflare) credentials from settings
+		const settingsResponse = await apiFetch( {
+			path: '/aether/site-exporter/settings',
+		} );
+		const settings = settingsResponse.settings || {};
+		const edgeProvider = settings.providers?.cloudflare || {};
+
+		// Use account_id and api_token from edge provider, not from R2 config
+		const accountId = edgeProvider.account_id || '';
+		const apiToken = edgeProvider.api_token || '';
+
+		if ( ! accountId || ! apiToken ) {
 			return null;
 		}
 
-		this.edgeService = new EdgeService(
-			config.cloudflare_account_id,
-			config.access_key_id, // API token
-			config
-		);
+		this.edgeService = new EdgeService( accountId, apiToken, config );
 
 		return this.edgeService;
 	}
@@ -304,6 +233,82 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 		}
 
 		return await storage.testConnection();
+	}
+
+	/**
+	 * Upload a file to R2 storage.
+	 *
+	 * @param {string} filePath Source file path (URL or local path).
+	 * @param {string} fileName Destination file name/key in storage.
+	 * @param {Object} context  Optional upload context.
+	 * @return {Promise<Object>} Upload result with success status and URL.
+	 */
+	async uploadFile( filePath, fileName, context = {} ) {
+		try {
+			const storage = await this.getStorageService();
+			if ( ! storage ) {
+				return {
+					success: false,
+					error: __(
+						'Storage service not available. Please configure worker_endpoint and bucket_name.',
+						'aether'
+					),
+				};
+			}
+
+			// Fetch the file from the filePath (could be a URL or local path)
+			let file;
+			if (
+				filePath.startsWith( 'http://' ) ||
+				filePath.startsWith( 'https://' )
+			) {
+				// Fetch from URL
+				const response = await fetch( filePath );
+				if ( ! response.ok ) {
+					return {
+						success: false,
+						error: __( 'Failed to fetch file from URL', 'aether' ),
+					};
+				}
+				const blob = await response.blob();
+				file = new File( [ blob ], fileName, { type: blob.type } );
+			} else {
+				// For local paths, we need to fetch via REST API
+				// This is a simplified implementation - may need adjustment based on actual file handling
+				return {
+					success: false,
+					error: __(
+						'Local file upload not yet implemented for R2',
+						'aether'
+					),
+				};
+			}
+
+			// Upload to storage
+			const result = await storage.upload( fileName, file, {
+				contentType: file.type,
+				onProgress: context.onProgress || null,
+			} );
+
+			if ( ! result.success ) {
+				return result;
+			}
+
+			// Get public URL
+			const publicUrl = this.getPublicUrl( fileName );
+
+			return {
+				success: true,
+				url: publicUrl || result.url || '',
+				path: fileName,
+				message: __( 'File uploaded successfully', 'aether' ),
+			};
+		} catch ( error ) {
+			return {
+				success: false,
+				error: error.message || __( 'File upload failed', 'aether' ),
+			};
+		}
 	}
 
 	/**
