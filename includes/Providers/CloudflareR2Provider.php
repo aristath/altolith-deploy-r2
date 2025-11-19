@@ -123,6 +123,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'text',
 				'label' => \__('Access Key ID', 'aether-site-exporter-providers'),
 				'name' => 'access_key_id',
+				'required' => true,
 				'sanitize_callback' => function ($value) {
 					if (! \is_string($value)) {
 						return '';
@@ -155,6 +156,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'password',
 				'label' => \__('Secret Access Key', 'aether-site-exporter-providers'),
 				'name' => 'secret_access_key',
+				'required' => true,
 				'sanitize_callback' => function ($value) {
 					if (! \is_string($value)) {
 						return '';
@@ -186,6 +188,7 @@ class CloudflareR2Provider extends BaseProvider
 				'type' => 'text',
 				'label' => \__('Bucket Name', 'aether-site-exporter-providers'),
 				'name' => 'bucket_name',
+				'required' => true,
 				'sanitize_callback' => function ($value) {
 					if (! \is_string($value)) {
 						return '';
@@ -360,4 +363,3 @@ class CloudflareR2Provider extends BaseProvider
 		return ['cloudflare'];
 	}
 }
-

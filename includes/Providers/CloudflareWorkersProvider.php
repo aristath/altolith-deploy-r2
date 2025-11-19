@@ -78,49 +78,20 @@ class CloudflareWorkersProvider extends BaseProvider
 	}
 
 	/**
-	 * Get provider settings fields definition.
+	 * Get provider-specific settings fields definition.
+	 *
+	 * Note: The deployment_types field is automatically added by BaseProvider::getSettings().
 	 *
 	 * @return array<array<string, mixed>> Array of field definitions
 	 */
-	public function getSettings(): array
+	public function getProviderSettings(): array
 	{
 		return [
-			[
-				'type' => 'checkbox-group',
-				'label' => \__('Deployment Types', 'aether-site-exporter-providers'),
-				'name' => 'deployment_types',
-				'sanitize_callback' => function ($value) {
-					if (! \is_array($value)) {
-						return ['edge_functions'];
-					}
-					$validTypes = ['static_site', 'blueprint_bundle', 'edge_functions'];
-					return \array_values(\array_intersect($value, $validTypes));
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					$deploymentTypes = $settings['providers'][self::PROVIDER_ID]['deployment_types'] ?? null;
-					// Default to edge_functions if not set
-					if (! \is_array($deploymentTypes) || empty($deploymentTypes)) {
-						return ['edge_functions'];
-					}
-					return $deploymentTypes;
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['deployment_types'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
-			],
 			[
 				'type' => 'text',
 				'label' => \__('Account ID', 'aether-site-exporter-providers'),
 				'name' => 'account_id',
+				'required' => true,
 				'sanitize_callback' => function ($value) {
 					if (! \is_string($value)) {
 						return '';
@@ -152,6 +123,7 @@ class CloudflareWorkersProvider extends BaseProvider
 				'type' => 'password',
 				'label' => \__('API Token', 'aether-site-exporter-providers'),
 				'name' => 'api_token',
+				'required' => true,
 				'sanitize_callback' => function ($value) {
 					if (! \is_string($value)) {
 						return '';
@@ -182,4 +154,3 @@ class CloudflareWorkersProvider extends BaseProvider
 		];
 	}
 }
-
