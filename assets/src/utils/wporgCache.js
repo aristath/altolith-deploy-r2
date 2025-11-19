@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * WordPress.org API Cache - Persistent cache for WordPress.org existence checks
  *

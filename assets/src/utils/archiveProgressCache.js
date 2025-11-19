@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Archive Progress Cache - Persistent cache for archive creation progress
  *

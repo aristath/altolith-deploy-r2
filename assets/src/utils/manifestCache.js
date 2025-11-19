@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Manifest Cache - Persistent cache for file-manifest.json
  *

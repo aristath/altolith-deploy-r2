@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Cache Monitor - Utility for monitoring and managing all IndexedDB caches
  *

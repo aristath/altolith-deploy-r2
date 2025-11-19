@@ -10,7 +10,8 @@
 import { debug } from './debug';
 import { parseErrorResponse } from './errorParser';
 import { createSuccessResponse, createErrorResponse } from './standardResponse';
-import { TIMEOUT_VERY_LONG } from '../constants/timing';
+// Timeout for very long operations (5 minutes)
+const TIMEOUT_VERY_LONG = 300000;
 
 /**
  * Multipart upload threshold (20MB).
@@ -72,7 +73,6 @@ async function uploadSingleWithProgress(
 	const onProgress = options.onProgress || null;
 
 	return new Promise( ( resolve, reject ) => {
-		// eslint-disable-next-line no-undef
 		const xhr = new XMLHttpRequest();
 
 		// Set timeout for large file uploads (60 seconds)
@@ -147,9 +147,7 @@ async function uploadSingleWithProgress(
  * @return {Promise<Object>} Upload result.
  */
 async function uploadMultipart( workerEndpoint, key, file, options = {} ) {
-	const onProgress = options.onProgress || null;
 	const fileSize = file.size;
-	const numParts = Math.ceil( fileSize / MULTIPART_CHUNK_SIZE );
 	const contentType =
 		options.contentType || file.type || 'application/octet-stream';
 	const cacheControl = options.cacheControl || '';
@@ -167,6 +165,8 @@ async function uploadMultipart( workerEndpoint, key, file, options = {} ) {
 
 	// Step 2: Upload parts sequentially.
 	const parts = [];
+	const numParts = Math.ceil( fileSize / MULTIPART_CHUNK_SIZE ); // Calculate after early return
+	const onProgress = options.onProgress || null; // Assign just before use
 	for ( let partNumber = 1; partNumber <= numParts; partNumber++ ) {
 		const start = ( partNumber - 1 ) * MULTIPART_CHUNK_SIZE;
 		const end = Math.min( start + MULTIPART_CHUNK_SIZE, fileSize );

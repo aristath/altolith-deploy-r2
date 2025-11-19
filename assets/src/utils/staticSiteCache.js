@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Static Site Cache - IndexedDB-based cache for static site generation
  *

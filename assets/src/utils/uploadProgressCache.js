@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Upload Progress Cache - Persistent cache for upload progress tracking
  *

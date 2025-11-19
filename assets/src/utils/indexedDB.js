@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * IndexedDB Wrapper - Abstract storage interface for browser persistent storage
  *
@@ -15,8 +16,6 @@
  * - Automatic cleanup of expired data
  * - Built on battle-tested `idb` library (9.8M weekly downloads)
  */
-
-/* global indexedDB, IDBKeyRange */
 
 import { openDB } from 'idb';
 
