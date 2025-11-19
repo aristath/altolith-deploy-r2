@@ -2,7 +2,7 @@
  * Tests for useAsyncOperation hook
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useAsyncOperation } from '../useAsyncOperation';
 
 describe( 'useAsyncOperation', () => {

@@ -10,7 +10,6 @@
 import { AbstractAWSProvider } from '../AbstractAWSProvider';
 import { CAP_STORAGE } from '../../base/AbstractProvider';
 import { StorageService } from '../../services/storageService';
-import apiFetch from '../../../utils/api';
 
 // Mock dependencies
 jest.mock( '../../services/storageService' );

@@ -5,7 +5,7 @@
  */
 
 import { GitLabPagesProvider } from '../GitLabPagesProvider';
-import { CAP_STORAGE, CAP_STATIC_SITE } from '../../base/AbstractProvider';
+import { CAP_STATIC_SITE } from '../../base/AbstractProvider';
 
 // Mock ConfigStorage
 jest.mock( '../../utils/configStorage', () => ( {

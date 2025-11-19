@@ -8,7 +8,6 @@ import { CloudflareWorkersProvider } from '../CloudflareWorkersProvider';
 import { CAP_EDGE } from '../../base/AbstractProvider';
 import {
 	deployWorker,
-	getWorker,
 	testTokenPermissions,
 	deleteWorker as deleteWorkerAPI,
 	listCustomDomains,

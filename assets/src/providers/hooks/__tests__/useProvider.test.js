@@ -7,7 +7,7 @@
  * @package
  */
 
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import {
 	useProvider,
 	useProviderExists,
