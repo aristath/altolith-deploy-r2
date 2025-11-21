@@ -8,8 +8,7 @@
 
 namespace Aether\SiteExporterProviders;
 
-use Aether\SiteExporterProviders\Providers\CloudflareR2Provider;
-use Aether\SiteExporterProviders\Providers\CloudflareWorkersProvider;
+// Providers are now registered entirely in JavaScript, not PHP.
 
 \defined('ABSPATH') || exit;
 
@@ -63,22 +62,8 @@ class Plugin
 		// Use priority 5 to ensure provider scripts load before admin-settings (priority 10).
 		\add_action('admin_enqueue_scripts', [ $this, 'enqueueProviderScripts' ], 5);
 
-		// Register providers via filter.
-		$this->registerProviders();
-	}
-
-	/**
-	 * Register providers via aether_providers filter.
-	 *
-	 * @return void
-	 */
-	private function registerProviders(): void
-	{
-		\add_filter('aether_providers', function ($providers) {
-			$providers[] = new CloudflareR2Provider();
-			$providers[] = new CloudflareWorkersProvider();
-			return $providers;
-		});
+		// Providers are now registered entirely in JavaScript, not PHP.
+		// See assets/src/providers/*/index.js files for registration.
 	}
 
 	/**

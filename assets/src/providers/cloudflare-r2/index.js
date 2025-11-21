@@ -2,17 +2,24 @@
  * Cloudflare R2 Provider Registration
  *
  * Registers the Cloudflare R2 provider handlers via WordPress hooks.
- * Provider metadata and settings are registered via PHP.
+ * Provider metadata is registered in JavaScript, not PHP.
  *
  * @package
  */
 
-import { addFilter, addAction } from '@wordpress/hooks';
+import { addFilter, addAction, doAction } from '@wordpress/hooks';
 import { CloudflareR2Provider } from './CloudflareR2Provider';
 import { initCloudflareR2ModalHooks } from './modal-hooks';
+import ProviderRegistry from '@aether/providers/registry/ProviderRegistry';
 
 // Create provider instance for hook registration
 const provider = new CloudflareR2Provider();
+
+// Register provider in JavaScript registry
+ProviderRegistry.register( provider.getId(), provider );
+
+// Also trigger the hook for any listeners
+doAction( 'aether.providers.register', provider );
 
 /**
  * Handle unified file upload for a provider instance.

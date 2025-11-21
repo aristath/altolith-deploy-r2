@@ -3,13 +3,10 @@
 /**
  * PHPStan Bootstrap File
  *
- * Loads the base plugin's BaseProvider class for static analysis.
+ * Providers are now registered entirely in JavaScript, not PHP.
+ * This file is kept for compatibility but no longer loads PHP provider classes.
  *
  * @package Aether\SiteExporterProviders
  */
 
-// Load BaseProvider from base plugin
-$baseProviderPath = __DIR__ . '/../aether-site-exporter/includes/Providers/BaseProvider.php';
-if (file_exists($baseProviderPath)) {
-	require_once $baseProviderPath;
-}
+// No PHP provider classes to load - providers are JavaScript-only
