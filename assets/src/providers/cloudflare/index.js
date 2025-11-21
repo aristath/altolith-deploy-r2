@@ -4,33 +4,33 @@
  * Registers the Cloudflare Workers provider handlers via WordPress hooks.
  * Provider metadata and settings are registered via PHP.
  *
+ * This provider handles edge function deployment only.
+ * File uploads are handled by storage providers like cloudflare-r2.
+ *
  * @package
  */
 
 import { addFilter } from '@wordpress/hooks';
 import { CloudflareWorkersProvider } from './CloudflareWorkersProvider';
 
-// Create provider instance for hook registration
 const provider = new CloudflareWorkersProvider();
 
 /**
  * Register test connection handler hook.
- *
- * Providers register test handlers via aether.provider.test filter.
  */
 addFilter(
 	'aether.provider.test',
 	'aether/cloudflare',
 	( handler, providerId, config ) => {
-		// Only handle requests for this provider
-		if ( providerId !== 'cloudflare' ) {
-			return handler; // Return existing handler or null
+		// Handle 'cloudflare' or 'cloudflare:uuid' format
+		if (
+			providerId !== 'cloudflare' &&
+			! providerId?.startsWith( 'cloudflare:' )
+		) {
+			return handler;
 		}
-
-		// Return test handler function
-		return async ( testConfig ) => {
-			return await provider.testConnection( testConfig || config );
-		};
+		return async ( testConfig ) =>
+			provider.testConnection( testConfig || config );
 	},
 	10
 );

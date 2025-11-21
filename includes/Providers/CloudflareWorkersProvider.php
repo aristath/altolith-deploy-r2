@@ -103,21 +103,6 @@ class CloudflareWorkersProvider extends BaseProvider
 					}
 					return $value;
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['account_id'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['account_id'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'password',
@@ -134,21 +119,6 @@ class CloudflareWorkersProvider extends BaseProvider
 						return '';
 					}
 					return $value; // Store as-is, encryption handled by REST API
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['api_token'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['api_token'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
 				},
 			],
 		];

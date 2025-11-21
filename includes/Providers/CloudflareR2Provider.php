@@ -103,21 +103,6 @@ class CloudflareR2Provider extends BaseProvider
 					}
 					return $value;
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['cloudflare_account_id'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['cloudflare_account_id'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'text',
@@ -136,21 +121,6 @@ class CloudflareR2Provider extends BaseProvider
 					}
 					return $value;
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['access_key_id'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['access_key_id'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'password',
@@ -167,21 +137,6 @@ class CloudflareR2Provider extends BaseProvider
 						return '';
 					}
 					return $value; // Store as-is, encryption handled by REST API
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['secret_access_key'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['secret_access_key'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
 				},
 			],
 			[
@@ -205,21 +160,6 @@ class CloudflareR2Provider extends BaseProvider
 					}
 					return $value;
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['bucket_name'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['bucket_name'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'text',
@@ -231,21 +171,6 @@ class CloudflareR2Provider extends BaseProvider
 						return '';
 					}
 					return \sanitize_text_field($value);
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['region'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['region'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
 				},
 			],
 			[
@@ -259,21 +184,6 @@ class CloudflareR2Provider extends BaseProvider
 					}
 					return \esc_url_raw($value);
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['endpoint'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['endpoint'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'url',
@@ -285,21 +195,6 @@ class CloudflareR2Provider extends BaseProvider
 						return '';
 					}
 					return \esc_url_raw($value);
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['worker_endpoint'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['worker_endpoint'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
 				},
 			],
 			[
@@ -313,21 +208,6 @@ class CloudflareR2Provider extends BaseProvider
 					}
 					return \esc_url_raw($value);
 				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['custom_domain'] ?? '';
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['custom_domain'] = $value;
-					\update_option('aether_site_exporter_settings', $settings);
-				},
 			],
 			[
 				'type' => 'checkbox',
@@ -336,21 +216,6 @@ class CloudflareR2Provider extends BaseProvider
 				'is_advanced' => true,
 				'sanitize_callback' => function ($value) {
 					return (bool) $value;
-				},
-				'get' => function () {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					return $settings['providers'][self::PROVIDER_ID]['public_access'] ?? false;
-				},
-				'set' => function ($value) {
-					$settings = \get_option('aether_site_exporter_settings', []);
-					if (! isset($settings['providers']) || ! \is_array($settings['providers'])) {
-						$settings['providers'] = [];
-					}
-					if (! isset($settings['providers'][self::PROVIDER_ID]) || ! \is_array($settings['providers'][self::PROVIDER_ID])) {
-						$settings['providers'][self::PROVIDER_ID] = [];
-					}
-					$settings['providers'][self::PROVIDER_ID]['public_access'] = (bool) $value;
-					\update_option('aether_site_exporter_settings', $settings);
 				},
 			],
 		];

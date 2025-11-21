@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@aether/base/*": [ "../aether-site-exporter/assets/src/*" ],
+			"@aether/utils/*": [ "../aether-site-exporter/assets/src/utils/*" ],
+			"@aether/components/*": [ "../aether-site-exporter/assets/src/components/*" ],
+			"@aether/hooks/*": [ "../aether-site-exporter/assets/src/hooks/*" ],
+			"@aether/constants/*": [ "../aether-site-exporter/assets/src/constants/*" ],
+			"@aether/contexts/*": [ "../aether-site-exporter/assets/src/contexts/*" ],
+			"@aether/services/*": [ "../aether-site-exporter/assets/src/services/*" ],
+			"@aether/providers/*": [ "../aether-site-exporter/assets/src/providers/*" ],
+			"@aether/publish/*": [ "../aether-site-exporter/assets/src/publish/*" ],
+			"@aether/admin/*": [ "../aether-site-exporter/assets/src/admin-settings/*" ]
+		},
+		"jsx": "react",
+		"module": "esnext",
+		"target": "es2017",
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": [
+		"assets/src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"vendor",
+		"coverage",
+		"assets/build"
+	]
+}

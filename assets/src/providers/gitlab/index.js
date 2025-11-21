@@ -10,27 +10,24 @@
 import { addFilter } from '@wordpress/hooks';
 import { GitLabProvider } from './GitLabProvider';
 
-// Create provider instance for hook registration
 const provider = new GitLabProvider();
 
 /**
  * Register test connection handler hook.
- *
- * Providers register test handlers via aether.provider.test filter.
  */
 addFilter(
 	'aether.provider.test',
 	'aether/gitlab',
 	( handler, providerId, config ) => {
-		// Only handle requests for this provider
-		if ( providerId !== 'gitlab' ) {
-			return handler; // Return existing handler or null
+		// Handle 'gitlab' or 'gitlab:uuid' format
+		if (
+			providerId !== 'gitlab' &&
+			! providerId?.startsWith( 'gitlab:' )
+		) {
+			return handler;
 		}
-
-		// Return test handler function
-		return async ( testConfig ) => {
-			return await provider.testConnection( testConfig || config );
-		};
+		return async ( testConfig ) =>
+			provider.testConnection( testConfig || config );
 	},
 	10
 );

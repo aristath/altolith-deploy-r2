@@ -97,6 +97,43 @@ module.exports = {
 				__dirname,
 				'../aether-site-exporter/assets/src'
 			),
+			// Mirror base plugin's aliases so transitive imports resolve correctly
+			'@aether/utils': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/utils'
+			),
+			'@aether/components': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/components'
+			),
+			'@aether/hooks': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/hooks'
+			),
+			'@aether/constants': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/constants'
+			),
+			'@aether/contexts': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/contexts'
+			),
+			'@aether/services': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/services'
+			),
+			'@aether/providers': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/providers'
+			),
+			'@aether/publish': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/publish'
+			),
+			'@aether/admin': require( 'path' ).resolve(
+				__dirname,
+				'../aether-site-exporter/assets/src/admin-settings'
+			),
 		},
 	},
 	externals: ( { request }, callback ) => {
