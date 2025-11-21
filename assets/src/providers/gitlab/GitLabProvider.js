@@ -78,14 +78,71 @@ export class GitLabProvider extends AbstractGitProvider {
 	/**
 	 * Get provider-specific configuration fields.
 	 *
-	 * Settings are now handled by PHP via BaseProvider.getSettings().
-	 * This method returns an empty array since JavaScript no longer defines fields.
-	 *
-	 * @return {Array<Object>} Empty array (settings handled by PHP)
+	 * @return {Array<Object>} Array of field definitions
 	 */
 	getProviderSpecificConfigFields() {
-		// Settings are handled by PHP, not JavaScript
-		return [];
+		return [
+			{
+				id: 'personal_access_token',
+				label: __( 'Personal Access Token', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: true,
+				help: __(
+					'GitLab Personal Access Token with api and write_repository scopes',
+					'aether'
+				),
+			},
+			{
+				id: 'project_id',
+				label: __( 'Project ID', 'aether' ),
+				type: 'text',
+				required: false,
+				sensitive: false,
+				validation: {
+					pattern: '^\\d+$',
+					message: __(
+						'Project ID must be a numeric value',
+						'aether'
+					),
+				},
+				help: __(
+					'GitLab project ID. Either project_id or namespace+project_path is required.',
+					'aether'
+				),
+			},
+			{
+				id: 'namespace',
+				label: __( 'Namespace', 'aether' ),
+				type: 'text',
+				required: false,
+				sensitive: false,
+				help: __(
+					'GitLab namespace (username or group) for the repository',
+					'aether'
+				),
+			},
+			{
+				id: 'project_path',
+				label: __( 'Project Path', 'aether' ),
+				type: 'text',
+				required: false,
+				sensitive: false,
+				help: __(
+					'Repository name/path within the namespace. Either project_id or namespace+project_path is required.',
+					'aether'
+				),
+			},
+			{
+				id: 'branch',
+				label: __( 'Branch', 'aether' ),
+				type: 'text',
+				required: false,
+				sensitive: false,
+				default: 'main',
+				help: __( 'Git branch to push to', 'aether' ),
+			},
+		];
 	}
 
 	/**

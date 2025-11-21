@@ -121,14 +121,128 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 	/**
 	 * Get provider-specific configuration fields.
 	 *
-	 * Settings are now handled by PHP via BaseProvider.getSettings().
-	 * This method returns an empty array since JavaScript no longer defines fields.
-	 *
-	 * @return {Array<Object>} Empty array (settings handled by PHP)
+	 * @return {Array<Object>} Array of field definitions
 	 */
 	getProviderSpecificConfigFields() {
-		// Settings are handled by PHP, not JavaScript
-		return [];
+		return [
+			{
+				id: 'cloudflare_account_id',
+				label: __( 'Cloudflare Account ID', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: true,
+				hidden: true, // Hidden - configured in Cloudflare Workers (edge) provider
+				validation: {
+					pattern: /^[a-f0-9]{32}$/,
+					message: __(
+						'Account ID must be a 32-character hexadecimal string',
+						'aether'
+					),
+				},
+			},
+			{
+				id: 'access_key_id',
+				label: __( 'Access Key ID', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: true,
+				validation: {
+					minLength: 16,
+					maxLength: 128,
+					message: __(
+						'Access Key ID must be between 16 and 128 characters',
+						'aether'
+					),
+				},
+			},
+			{
+				id: 'secret_access_key',
+				label: __( 'Secret Access Key', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: true,
+				validation: {
+					minLength: 32,
+					maxLength: 128,
+					message: __(
+						'Secret Access Key must be between 32 and 128 characters',
+						'aether'
+					),
+				},
+			},
+			{
+				id: 'bucket_name',
+				label: __( 'Bucket Name', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: false,
+				validation: {
+					pattern: /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/,
+					minLength: 3,
+					maxLength: 63,
+					message: __(
+						'Bucket name must be 3-63 characters, start and end with alphanumeric, and contain only lowercase letters, numbers, and hyphens',
+						'aether'
+					),
+				},
+			},
+			{
+				id: 'region',
+				label: __( 'Region (Optional)', 'aether' ),
+				type: 'text',
+				required: false,
+				sensitive: false,
+				isAdvanced: true,
+			},
+			{
+				id: 'endpoint',
+				label: __( 'Endpoint URL (Optional)', 'aether' ),
+				type: 'url',
+				required: false,
+				sensitive: false,
+				isAdvanced: true,
+			},
+			{
+				id: 'worker_endpoint',
+				label: __( 'Worker Endpoint URL', 'aether' ),
+				type: 'url',
+				required: false,
+				sensitive: false,
+				isAdvanced: true,
+				help: __(
+					'URL of the deployed Cloudflare Worker that handles file uploads',
+					'aether'
+				),
+			},
+			{
+				id: 'custom_domain',
+				label: __( 'Custom Domain (Optional)', 'aether' ),
+				type: 'url',
+				required: false,
+				sensitive: false,
+				isAdvanced: true,
+			},
+			{
+				id: 'public_access',
+				label: __( 'Enable Public Access', 'aether' ),
+				type: 'checkbox',
+				required: false,
+				sensitive: false,
+				isAdvanced: true,
+				default: false,
+			},
+		];
+	}
+
+	/**
+	 * Get provider dependencies.
+	 *
+	 * Cloudflare R2 requires Cloudflare Workers provider to be enabled and configured.
+	 *
+	 * @return {Array<string>} Array of provider IDs this provider depends on
+	 */
+	getDependencies() {
+		return [ 'cloudflare' ];
 	}
 
 	/**

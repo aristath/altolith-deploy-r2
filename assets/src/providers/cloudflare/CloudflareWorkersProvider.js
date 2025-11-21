@@ -114,14 +114,39 @@ export class CloudflareWorkersProvider extends AbstractProvider {
 	/**
 	 * Get provider-specific configuration fields.
 	 *
-	 * Settings are now handled by PHP via BaseProvider.getSettings().
-	 * This method returns an empty array since JavaScript no longer defines fields.
-	 *
-	 * @return {Array<Object>} Empty array (settings handled by PHP)
+	 * @return {Array<Object>} Array of field definitions
 	 */
 	getProviderSpecificConfigFields() {
-		// Settings are handled by PHP, not JavaScript
-		return [];
+		return [
+			{
+				id: 'account_id',
+				label: __( 'Account ID', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: false,
+				validation: {
+					pattern: /^[a-f0-9]{32}$/,
+					message: __(
+						'Account ID must be a 32-character hexadecimal string',
+						'aether'
+					),
+				},
+			},
+			{
+				id: 'api_token',
+				label: __( 'API Token', 'aether' ),
+				type: 'text',
+				required: true,
+				sensitive: true,
+				validation: {
+					minLength: 20,
+					message: __(
+						'API Token must be at least 20 characters',
+						'aether'
+					),
+				},
+			},
+		];
 	}
 
 	/**
