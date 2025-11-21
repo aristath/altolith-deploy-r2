@@ -133,7 +133,7 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 				sensitive: true,
 				hidden: true, // Hidden - configured in Cloudflare Workers (edge) provider
 				validation: {
-					pattern: /^[a-f0-9]{32}$/,
+					pattern: '^[a-f0-9]{32}$',
 					message: __(
 						'Account ID must be a 32-character hexadecimal string',
 						'aether'
@@ -177,7 +177,7 @@ export class CloudflareR2Provider extends AbstractAWSProvider {
 				required: true,
 				sensitive: false,
 				validation: {
-					pattern: /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/,
+					pattern: '^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$',
 					minLength: 3,
 					maxLength: 63,
 					message: __(

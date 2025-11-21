@@ -123,9 +123,9 @@ export class CloudflareWorkersProvider extends AbstractProvider {
 				label: __( 'Account ID', 'aether' ),
 				type: 'text',
 				required: true,
-				sensitive: false,
+				sensitive: true,
 				validation: {
-					pattern: /^[a-f0-9]{32}$/,
+					pattern: '^[a-f0-9]{32}$',
 					message: __(
 						'Account ID must be a 32-character hexadecimal string',
 						'aether'
@@ -135,7 +135,7 @@ export class CloudflareWorkersProvider extends AbstractProvider {
 			{
 				id: 'api_token',
 				label: __( 'API Token', 'aether' ),
-				type: 'text',
+				type: 'password',
 				required: true,
 				sensitive: true,
 				validation: {
