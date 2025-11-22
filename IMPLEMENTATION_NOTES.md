@@ -108,7 +108,7 @@ export async function uploadStaticSiteFilesHandler( context ) {
 
   // Filter URLs
   const filteredUrls = applyFilters(
-    'aether.upload.urls',
+    'aether.publish.step.uploadStaticSiteFiles.urls',
     urls,
     providers // Pass array instead of single ID
   );
@@ -164,7 +164,7 @@ export async function uploadStaticSiteFilesHandler( context ) {
   }
 
   return applyFilters(
-    'aether.upload.result',
+    'aether.publish.step.uploadStaticSiteFiles.result',
     {
       providers,
       results: results.map(r => r.status === 'fulfilled' ? r.value : r.reason),

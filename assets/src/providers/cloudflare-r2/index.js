@@ -15,8 +15,14 @@ import ProviderRegistry from '@aether/providers/registry/ProviderRegistry';
 // Create provider instance for hook registration
 const provider = new CloudflareR2Provider();
 
+// eslint-disable-next-line no-console
+console.log( 'CloudflareR2Provider: Registering provider...', provider.getId() );
+
 // Register provider in JavaScript registry
 ProviderRegistry.register( provider.getId(), provider );
+
+// eslint-disable-next-line no-console
+console.log( 'CloudflareR2Provider: Provider registered successfully' );
 
 // Also trigger the hook for any listeners
 doAction( 'aether.providers.register', provider );
