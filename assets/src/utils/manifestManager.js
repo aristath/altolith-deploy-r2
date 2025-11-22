@@ -5,8 +5,8 @@
  * for upload optimization. The manifest is stored remotely at
  * file-manifest.json and cached locally in IndexedDB.
  *
- * Performance: Local caching saves 2-5 seconds per publish by avoiding
- * remote manifest download on subsequent publishes within 1 hour.
+ * Performance: Local caching saves 2-5 seconds per export by avoiding
+ * remote manifest download on subsequent exportes within 1 hour.
  *
  * @package
  */
@@ -18,7 +18,7 @@ import { getManifestCache } from './manifestCache';
  * Fetch existing manifest from remote storage with local caching.
  *
  * Checks local IndexedDB cache first (1-hour TTL), falls back to remote download.
- * Saves 2-5 seconds per publish by avoiding network round trip.
+ * Saves 2-5 seconds per export by avoiding network round trip.
  *
  * @param {Object} storageService StorageService instance.
  * @param {string} providerId     Optional provider ID for caching (defaults to 'default').
@@ -76,7 +76,7 @@ export async function fetchManifest( storageService, providerId = 'default' ) {
 			'Failed to fetch manifest, starting with empty manifest:',
 			error
 		);
-		// Don't cache errors to allow retry on next publish
+		// Don't cache errors to allow retry on next export
 		return {};
 	}
 }

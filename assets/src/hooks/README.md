@@ -14,7 +14,7 @@ This directory contains custom hooks that encapsulate reusable logic. Hooks foll
 
 ⚠️ **God Hook** - Needs refactoring (873 LOC, 7+ responsibilities)
 
-**Location:** Used by publish workflow
+**Location:** Used by export workflow
 
 **Responsibilities (too many):**
 - Step orchestration
@@ -33,7 +33,7 @@ This directory contains custom hooks that encapsulate reusable logic. Hooks foll
 
 ### usePublishAPI
 
-Centralizes all publish-related REST API calls.
+Centralizes all export-related REST API calls.
 
 **Location:** `usePublishAPI.js`
 
@@ -43,7 +43,7 @@ const {
     discoverAssets,      // Discover changed assets
     getAssetStatus,      // Get asset status
     markAssetChanged,    // Mark asset as changed
-    startPublish,        // Start publish job
+    startPublish,        // Start export job
     getJobStatus,        // Get job status
     executeStep,         // Execute workflow step
     markUploadsComplete, // Mark uploads complete

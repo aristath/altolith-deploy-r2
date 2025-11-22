@@ -2,7 +2,7 @@
  * usePublishContext Hook
  *
  * Hook to consume the PublishContext.
- * Provides access to global publish workflow state and operations.
+ * Provides access to global export workflow state and operations.
  *
  * @package
  */
@@ -11,7 +11,7 @@ import { useContext } from '@wordpress/element';
 import { PublishContext } from '../contexts/PublishContext';
 
 /**
- * Hook to access publish context
+ * Hook to access export context
  *
  * Must be used within a PublishProvider.
  *
@@ -30,7 +30,7 @@ import { PublishContext } from '../contexts/PublishContext';
  * @property {Function} updateFromStep          - Transition to a step
  * @property {Function} markAllComplete         - Mark all steps complete
  * @property {Function} showError               - Show error message
- * @property {Function} setIsPublishing         - Set publishing flag
+ * @property {Function} setIsPublishing         - Set exporting flag
  * @property {Function} setJobId                - Set job ID
  * @property {Function} setStatusMessage        - Set status message
  * @property {Function} setOverallProgressValue - Set overall progress

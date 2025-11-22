@@ -9,7 +9,7 @@
  * Features:
  * - Persistent storage across browser sessions
  * - 24-hour cache expiration (uploads older than 24h are auto-deleted)
- * - Session-based tracking (each publish gets unique session ID)
+ * - Session-based tracking (each export gets unique session ID)
  * - Tracks uploaded files, manifest state, workflow progress
  * - Works in WordPress Playground WASM environment
  *
@@ -17,7 +17,7 @@
  * - Browser crashes during large uploads
  * - Network interruptions
  * - User accidentally closes tab
- * - Manual publish cancellation (can resume later)
+ * - Manual export cancellation (can resume later)
  *
  * @package
  */
@@ -90,7 +90,7 @@ export class UploadProgressCache {
 	 *
 	 * @param {Object} options             - Session options
 	 * @param {string} options.providerId  - Storage provider ID
-	 * @param {Array}  options.urls        - URLs to publish
+	 * @param {Array}  options.urls        - URLs to export
 	 * @param {Object} options.exportTypes - Export types configuration
 	 * @return {Promise<Object>} Created session
 	 */

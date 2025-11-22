@@ -3,7 +3,7 @@
  * Manifest Cache - Persistent cache for file-manifest.json
  *
  * Caches the file manifest locally in IndexedDB to avoid fetching from remote
- * storage on every publish. Provides 2-5 second improvement per publish by
+ * storage on every export. Provides 2-5 second improvement per export by
  * eliminating network round trip for manifest download.
  *
  * Cache Key Strategy:
@@ -17,8 +17,8 @@
  * - Works in WordPress Playground WASM environment
  *
  * Performance Impact:
- * - First publish: Fetch from remote, cache locally (no improvement)
- * - Subsequent publishes within 1 hour: Use cached manifest (2-5 second improvement)
+ * - First export: Fetch from remote, cache locally (no improvement)
+ * - Subsequent exportes within 1 hour: Use cached manifest (2-5 second improvement)
  * - After manifest updates: Cache is automatically updated
  *
  * @package
@@ -158,7 +158,7 @@ export class ManifestCache {
 	/**
 	 * Invalidate cached manifest for a provider
 	 *
-	 * Use this after uploading a new manifest to force refresh on next publish
+	 * Use this after uploading a new manifest to force refresh on next export
 	 *
 	 * @param {string} providerId - Storage provider ID
 	 * @return {Promise<boolean>} True if deleted successfully

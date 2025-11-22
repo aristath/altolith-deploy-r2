@@ -3,7 +3,7 @@
  * WordPress.org API Cache - Persistent cache for WordPress.org existence checks
  *
  * Caches WordPress.org plugin/theme existence checks in IndexedDB with 7-day expiration.
- * Provides 3-15 second performance improvement per publish by eliminating redundant API calls.
+ * Provides 3-15 second performance improvement per export by eliminating redundant API calls.
  *
  * Features:
  * - Persistent storage across browser sessions

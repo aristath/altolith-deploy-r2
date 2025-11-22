@@ -35,7 +35,7 @@ const response = await apiFetch({
 
 **Location:** Actually in `../publish/utils/steps.js`
 
-Step definitions and metadata for the publish workflow. See [Publish README](../publish/README.md) for details.
+Step definitions and metadata for the export workflow. See [Publish README](../publish/README.md) for details.
 
 ### assetExtractor.js (Publish)
 

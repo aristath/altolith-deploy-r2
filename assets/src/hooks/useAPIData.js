@@ -34,7 +34,7 @@ import apiFetch from '../utils/api';
  * @example
  * // With transformation
  * const { data, loading, error } = useAPIData({
- *     path: '/aether/site-exporter/publish/jobs?limit=5',
+ *     path: '/aether/site-exporter/export/jobs?limit=5',
  *     transform: (response) => response.value?.jobs || [],
  *     initialData: []
  * });
@@ -189,7 +189,7 @@ export function useAPIData( {
  *
  * @example
  * const { data, loading, page, totalPages, nextPage, prevPage } = usePaginatedData({
- *     path: '/aether/site-exporter/publish/jobs',
+ *     path: '/aether/site-exporter/export/jobs',
  *     perPage: 10
  * });
  */

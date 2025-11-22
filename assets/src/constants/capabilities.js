@@ -133,7 +133,7 @@ export const CAPABILITY_DESCRIPTIONS = {
  */
 
 /**
- * Required capabilities for publish workflow
+ * Required capabilities for export workflow
  * @constant {string[]}
  */
 export const PUBLISH_REQUIRED_CAPABILITIES = [ CAP_STORAGE ];
@@ -188,10 +188,10 @@ export function hasRequiredCapabilities(
 }
 
 /**
- * Check if provider can handle publish workflow
+ * Check if provider can handle export workflow
  *
  * @param {string[]} providerCapabilities - Capabilities the provider supports
- * @return {boolean} True if provider can handle publish
+ * @return {boolean} True if provider can handle export
  */
 export function canPublish( providerCapabilities ) {
 	return hasRequiredCapabilities(
