@@ -125,9 +125,11 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				try {
 					await apiFetch( {
 						path: `/aether/site-exporter/providers/${ providerId }/config`,
-						method: 'PUT',
+						method: 'POST',
 						data: {
-							worker_endpoint: result.worker_url,
+							config: {
+								worker_endpoint: result.worker_url,
+							},
 						},
 					} );
 				} catch {
