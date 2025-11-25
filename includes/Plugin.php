@@ -121,8 +121,8 @@ class Plugin
 
 		// List of provider scripts to enqueue.
 		$providerScripts = [
-			'provider-cloudflare-r2',
-			'provider-cloudflare',
+			'provider-cloudflare-r2-static-site',
+			'provider-cloudflare-r2-blueprint-bundle',
 			'provider-gitlab',
 			'provider-gitlab-pages',
 		];
