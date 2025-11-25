@@ -244,61 +244,106 @@ const rootContainers = new Map();
 /**
  * Initialize modal hooks for Cloudflare R2 provider.
  *
+ * Uses the field-level hook `aether.admin.provider.field.after` to inject
+ * the Deploy Worker button after the `worker_endpoint` field.
+ *
  * @param {string} providerIdPrefix Provider ID prefix to match (e.g., 'cloudflare-r2-blueprint-bundle').
  */
 export function initCloudflareR2ModalHooks( providerIdPrefix ) {
-	// Hook into the after_fields action to add Deploy Worker button
+	// Hook into the field-level after action to add Deploy Worker button
+	// after the worker_endpoint field
 	addAction(
-		'aether.provider.form.after_fields',
+		'aether.admin.provider.field.after',
 		`aether/${ providerIdPrefix }/deploy-button`,
 		( context ) => {
-			// Only add button for matching provider
-			if ( ! context.providerId?.startsWith( providerIdPrefix ) ) {
+			// Only add button after worker_endpoint field for matching provider
+			if (
+				context.fieldId !== 'worker_endpoint' ||
+				! context.providerId?.startsWith( providerIdPrefix )
+			) {
 				return;
 			}
 
-			// Find the container element
-			const container = document.querySelector(
-				`.aether-provider-form__after-fields[data-provider-id="${ context.providerId }"]`
-			);
+			// Store context values for the render callback
+			const { formValues, onFormChange, providerId } = context;
 
-			if ( ! container ) {
-				return;
-			}
+			// Use requestAnimationFrame to ensure the field is in the DOM
+			requestAnimationFrame( () => {
+				// Find the worker_endpoint field container
+				// The field is wrapped in a div with class aether-provider-field
+				const fieldElements = document.querySelectorAll(
+					'.aether-provider-field'
+				);
 
-			// Clean up previous render if it exists
-			const existingRoot = reactRoots.get( context.providerId );
-			const existingContainer = rootContainers.get( context.providerId );
-			if ( existingRoot ) {
-				try {
-					existingRoot.unmount();
-				} catch {
-					if ( existingContainer && existingContainer.parentNode ) {
-						existingContainer.parentNode.removeChild(
-							existingContainer
-						);
+				let workerEndpointField = null;
+				fieldElements.forEach( ( el ) => {
+					// Check if this field has a label or input with worker_endpoint
+					const input = el.querySelector(
+						'input[id*="worker_endpoint"], input[name*="worker_endpoint"]'
+					);
+					const label = el.querySelector( 'label' );
+					if (
+						input ||
+						( label &&
+							label.textContent
+								?.toLowerCase()
+								.includes( 'worker' ) )
+					) {
+						workerEndpointField = el;
 					}
+				} );
+
+				if ( ! workerEndpointField ) {
+					return;
 				}
-				reactRoots.delete( context.providerId );
-				rootContainers.delete( context.providerId );
-			}
 
-			// Create a new root element for this render
-			const rootElement = document.createElement( 'div' );
-			container.appendChild( rootElement );
+				// Check if we already have a button container
+				const existingContainer = workerEndpointField.querySelector(
+					'.aether-deploy-worker-container'
+				);
+				if ( existingContainer ) {
+					return;
+				}
 
-			// Create React 18 root and render
-			const root = createRoot( rootElement );
-			reactRoots.set( context.providerId, root );
-			rootContainers.set( context.providerId, rootElement );
+				// Clean up previous render for this provider if it exists
+				const existingRoot = reactRoots.get( providerId );
+				const existingRootContainer = rootContainers.get( providerId );
+				if ( existingRoot ) {
+					try {
+						existingRoot.unmount();
+					} catch {
+						if (
+							existingRootContainer &&
+							existingRootContainer.parentNode
+						) {
+							existingRootContainer.parentNode.removeChild(
+								existingRootContainer
+							);
+						}
+					}
+					reactRoots.delete( providerId );
+					rootContainers.delete( providerId );
+				}
 
-			root.render(
-				<DeployWorkerButton
-					providerId={ context.providerId }
-					config={ context.values }
-					onChange={ context.onChange }
-				/>
-			);
+				// Create a new container element for the Deploy Worker button
+				const rootElement = document.createElement( 'div' );
+				rootElement.className = 'aether-deploy-worker-container';
+				workerEndpointField.appendChild( rootElement );
+
+				// Create React 18 root and render
+				const root = createRoot( rootElement );
+				reactRoots.set( providerId, root );
+				rootContainers.set( providerId, rootElement );
+
+				// Pass formValues and onFormChange from the hook context
+				root.render(
+					<DeployWorkerButton
+						providerId={ providerId }
+						config={ formValues || {} }
+						onChange={ onFormChange }
+					/>
+				);
+			} );
 		}
 	);
 }
