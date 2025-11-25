@@ -28,7 +28,10 @@ export class GitLabPagesProvider {
 	 *
 	 * @type {string}
 	 */
-	static NAME = __( 'GitLab Pages (Experimental)', 'aether' );
+	static NAME = __(
+		'GitLab Pages (Experimental)',
+		'aether-site-exporter-providers'
+	);
 
 	/**
 	 * Provider type.
@@ -44,7 +47,7 @@ export class GitLabPagesProvider {
 	 */
 	static DESCRIPTION = __(
 		'GitLab Pages static site hosting with automatic CI/CD pipelines. Uses GitLab API for browser-based deployment.',
-		'aether'
+		'aether-site-exporter-providers'
 	);
 
 	/**
@@ -69,65 +72,80 @@ export class GitLabPagesProvider {
 	static CONFIG_FIELDS = [
 		{
 			id: 'personal_access_token',
-			label: __( 'Personal Access Token', 'aether' ),
+			label: __(
+				'Personal Access Token',
+				'aether-site-exporter-providers'
+			),
 			type: 'text',
 			required: true,
 			sensitive: true,
 			help: __(
 				'GitLab Personal Access Token with api and write_repository scopes',
-				'aether'
+				'aether-site-exporter-providers'
 			),
 		},
 		{
 			id: 'project_id',
-			label: __( 'Project ID', 'aether' ),
+			label: __( 'Project ID', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: true,
 			sensitive: false,
 			validation: {
 				pattern: '^\\d+$',
-				message: __( 'Project ID must be a numeric value', 'aether' ),
+				message: __(
+					'Project ID must be a numeric value',
+					'aether-site-exporter-providers'
+				),
 			},
 		},
 		{
 			id: 'namespace',
-			label: __( 'Namespace', 'aether' ),
+			label: __( 'Namespace', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: false,
 			sensitive: false,
 			help: __(
 				'GitLab namespace (username or group) for the repository',
-				'aether'
+				'aether-site-exporter-providers'
 			),
 		},
 		{
 			id: 'project_path',
-			label: __( 'Project Path', 'aether' ),
+			label: __( 'Project Path', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: false,
 			sensitive: false,
-			help: __( 'Repository name/path within the namespace', 'aether' ),
+			help: __(
+				'Repository name/path within the namespace',
+				'aether-site-exporter-providers'
+			),
 		},
 		{
 			id: 'branch',
-			label: __( 'Branch', 'aether' ),
+			label: __( 'Branch', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: false,
 			sensitive: false,
 			default: 'main',
-			help: __( 'Git branch to push to', 'aether' ),
+			help: __(
+				'Git branch to push to',
+				'aether-site-exporter-providers'
+			),
 		},
 		{
 			id: 'pages_url',
-			label: __( 'Pages URL', 'aether' ),
+			label: __( 'Pages URL', 'aether-site-exporter-providers' ),
 			type: 'url',
 			required: false,
 			sensitive: false,
-			help: __( 'Custom GitLab Pages URL', 'aether' ),
+			help: __(
+				'Custom GitLab Pages URL',
+				'aether-site-exporter-providers'
+			),
 		},
 		{
 			id: 'custom_domain',
-			label: __( 'Custom Domain', 'aether' ),
+			label: __( 'Custom Domain', 'aether-site-exporter-providers' ),
 			type: 'url',
 			required: false,
 			sensitive: false,

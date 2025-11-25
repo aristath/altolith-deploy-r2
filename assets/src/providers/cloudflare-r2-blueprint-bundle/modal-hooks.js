@@ -40,7 +40,7 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				throw new Error(
 					__(
 						'Cloudflare Account ID and API Token are required',
-						'aether'
+						'aether-site-exporter-providers'
 					)
 				);
 			}
@@ -53,7 +53,7 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				throw new Error(
 					__(
 						'R2 Access Key ID, Secret Access Key, and Bucket Name are required',
-						'aether'
+						'aether-site-exporter-providers'
 					)
 				);
 			}
@@ -106,7 +106,10 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				throw new Error(
 					errorData.message ||
 						errorData.error ||
-						__( 'Failed to deploy worker', 'aether' )
+						__(
+							'Failed to deploy worker',
+							'aether-site-exporter-providers'
+						)
 				);
 			}
 
@@ -116,7 +119,10 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				throw new Error(
 					result.message ||
 						result.error ||
-						__( 'Failed to deploy worker', 'aether' )
+						__(
+							'Failed to deploy worker',
+							'aether-site-exporter-providers'
+						)
 				);
 			}
 
@@ -151,7 +157,11 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 			}, 10000 );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to deploy worker', 'aether' )
+				err.message ||
+					__(
+						'Failed to deploy worker',
+						'aether-site-exporter-providers'
+					)
 			);
 		} finally {
 			setDeploying( false );
@@ -180,8 +190,8 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 				}
 			>
 				{ deploying
-					? __( 'Deploying…', 'aether' )
-					: __( 'Deploy Worker', 'aether' ) }
+					? __( 'Deploying…', 'aether-site-exporter-providers' )
+					: __( 'Deploy Worker', 'aether-site-exporter-providers' ) }
 			</Button>
 
 			{ error && (
@@ -200,10 +210,18 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 					isDismissible={ false }
 					style={ { marginTop: '0.5rem' } }
 				>
-					{ __( 'Worker deployed successfully!', 'aether' ) }
+					{ __(
+						'Worker deployed successfully!',
+						'aether-site-exporter-providers'
+					) }
 					{ workerUrl && (
 						<div style={ { marginTop: '0.5rem' } }>
-							<strong>{ __( 'Worker URL:', 'aether' ) }</strong>{ ' ' }
+							<strong>
+								{ __(
+									'Worker URL:',
+									'aether-site-exporter-providers'
+								) }
+							</strong>{ ' ' }
 							<a
 								href={ workerUrl }
 								target="_blank"

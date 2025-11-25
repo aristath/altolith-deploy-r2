@@ -27,7 +27,7 @@ export default function PlaygroundNotice() {
 			<h3 className="aether-playground-notice__title">
 				{ __(
 					'Aether is designed for WordPress Playground',
-					'aether'
+					'aether-site-exporter-providers'
 				) }
 			</h3>
 			<p className="aether-playground-notice__text">
@@ -35,7 +35,7 @@ export default function PlaygroundNotice() {
 					/* translators: %s: WordPress Playground URL */
 					__(
 						'This plugin is specifically designed to work within %s, a browser-based WordPress environment.',
-						'aether'
+						'aether-site-exporter-providers'
 					),
 					<a
 						className="aether-playground-notice__link"
@@ -50,7 +50,7 @@ export default function PlaygroundNotice() {
 			<p className="aether-playground-notice__text">
 				{ __(
 					'While it will function on a standard WordPress installation, you may encounter unexpected behavior. For the best experience, please use this plugin within WordPress Playground.',
-					'aether'
+					'aether-site-exporter-providers'
 				) }
 			</p>
 		</Notice>

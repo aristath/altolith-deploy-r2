@@ -28,7 +28,7 @@ export class CloudflareR2StaticSiteProvider {
 	 *
 	 * @type {string}
 	 */
-	static NAME = __( 'Cloudflare R2 (Static Site)', 'aether' );
+	static NAME = __( 'Cloudflare R2', 'aether-site-exporter-providers' );
 
 	/**
 	 * Provider type.
@@ -44,7 +44,7 @@ export class CloudflareR2StaticSiteProvider {
 	 */
 	static DESCRIPTION = __(
 		'Cloudflare R2 object storage for static site exports with zero egress fees.',
-		'aether'
+		'aether-site-exporter-providers'
 	);
 
 	/**
@@ -69,7 +69,10 @@ export class CloudflareR2StaticSiteProvider {
 	static CONFIG_FIELDS = [
 		{
 			id: 'account_id',
-			label: __( 'Cloudflare Account ID', 'aether' ),
+			label: __(
+				'Cloudflare Account ID',
+				'aether-site-exporter-providers'
+			),
 			type: 'text',
 			required: true,
 			sensitive: true,
@@ -77,13 +80,16 @@ export class CloudflareR2StaticSiteProvider {
 				pattern: '^[a-f0-9]{32}$',
 				message: __(
 					'Account ID must be a 32-character hexadecimal string',
-					'aether'
+					'aether-site-exporter-providers'
 				),
 			},
 		},
 		{
 			id: 'api_token',
-			label: __( 'Cloudflare API Token', 'aether' ),
+			label: __(
+				'Cloudflare API Token',
+				'aether-site-exporter-providers'
+			),
 			type: 'password',
 			required: true,
 			sensitive: true,
@@ -91,13 +97,13 @@ export class CloudflareR2StaticSiteProvider {
 				minLength: 20,
 				message: __(
 					'API Token must be at least 20 characters',
-					'aether'
+					'aether-site-exporter-providers'
 				),
 			},
 		},
 		{
 			id: 'access_key_id',
-			label: __( 'R2 Access Key ID', 'aether' ),
+			label: __( 'R2 Access Key ID', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: true,
 			sensitive: true,
@@ -106,13 +112,16 @@ export class CloudflareR2StaticSiteProvider {
 				maxLength: 128,
 				message: __(
 					'Access Key ID must be between 16 and 128 characters',
-					'aether'
+					'aether-site-exporter-providers'
 				),
 			},
 		},
 		{
 			id: 'secret_access_key',
-			label: __( 'R2 Secret Access Key', 'aether' ),
+			label: __(
+				'R2 Secret Access Key',
+				'aether-site-exporter-providers'
+			),
 			type: 'text',
 			required: true,
 			sensitive: true,
@@ -121,13 +130,13 @@ export class CloudflareR2StaticSiteProvider {
 				maxLength: 128,
 				message: __(
 					'Secret Access Key must be between 32 and 128 characters',
-					'aether'
+					'aether-site-exporter-providers'
 				),
 			},
 		},
 		{
 			id: 'bucket_name',
-			label: __( 'Bucket Name', 'aether' ),
+			label: __( 'Bucket Name', 'aether-site-exporter-providers' ),
 			type: 'text',
 			required: true,
 			sensitive: false,
@@ -137,24 +146,30 @@ export class CloudflareR2StaticSiteProvider {
 				maxLength: 63,
 				message: __(
 					'Bucket name must be 3-63 characters, start and end with alphanumeric, and contain only lowercase letters, numbers, and hyphens',
-					'aether'
+					'aether-site-exporter-providers'
 				),
 			},
 		},
 		{
 			id: 'worker_endpoint',
-			label: __( 'Worker Endpoint URL', 'aether' ),
+			label: __(
+				'Worker Endpoint URL',
+				'aether-site-exporter-providers'
+			),
 			type: 'url',
 			required: false,
 			sensitive: false,
 			help: __(
 				'URL of the deployed Cloudflare Worker. Use the Deploy Worker button below to create one.',
-				'aether'
+				'aether-site-exporter-providers'
 			),
 		},
 		{
 			id: 'custom_domain',
-			label: __( 'Custom Domain (Optional)', 'aether' ),
+			label: __(
+				'Custom Domain (Optional)',
+				'aether-site-exporter-providers'
+			),
 			type: 'url',
 			required: false,
 			sensitive: false,

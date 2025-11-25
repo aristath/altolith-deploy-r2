@@ -60,7 +60,10 @@ async function testConnection( providerId ) {
 	if ( ! config.personal_access_token ) {
 		return {
 			success: false,
-			error: __( 'Personal access token is required', 'aether' ),
+			error: __(
+				'Personal access token is required',
+				'aether-site-exporter-providers'
+			),
 		};
 	}
 
@@ -76,7 +79,10 @@ async function testConnection( providerId ) {
 				success: false,
 				error: sprintf(
 					/* translators: %d: HTTP status code */
-					__( 'GitLab API returned status %d', 'aether' ),
+					__(
+						'GitLab API returned status %d',
+						'aether-site-exporter-providers'
+					),
 					response.status
 				),
 			};
@@ -100,7 +106,7 @@ async function testConnection( providerId ) {
 					success: false,
 					error: __(
 						'Cannot access GitLab project. Please verify project ID and token permissions.',
-						'aether'
+						'aether-site-exporter-providers'
 					),
 				};
 			}
@@ -110,7 +116,10 @@ async function testConnection( providerId ) {
 			success: true,
 			message: sprintf(
 				/* translators: %s: GitLab username */
-				__( 'Successfully connected to GitLab as %s', 'aether' ),
+				__(
+					'Successfully connected to GitLab as %s',
+					'aether-site-exporter-providers'
+				),
 				userData.username || userData.name
 			),
 		};
@@ -119,7 +128,10 @@ async function testConnection( providerId ) {
 			success: false,
 			error:
 				error.message ||
-				__( 'Failed to connect to GitLab API', 'aether' ),
+				__(
+					'Failed to connect to GitLab API',
+					'aether-site-exporter-providers'
+				),
 		};
 	}
 }
