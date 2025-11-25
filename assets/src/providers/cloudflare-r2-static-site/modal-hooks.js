@@ -7,10 +7,10 @@
  * @package
  */
 
-import { useState, createRoot } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { addAction } from '@wordpress/hooks';
+import { addFilter } from '@wordpress/hooks';
 import apiFetch from '../../utils/api';
 
 /**
@@ -35,24 +35,17 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 		setWorkerUrl( null );
 
 		try {
-			// Validate required credentials from this provider's config
-			if ( ! config?.account_id || ! config?.api_token ) {
-				throw new Error(
-					__(
-						'Cloudflare Account ID and API Token are required',
-						'aether-site-exporter-providers'
-					)
-				);
-			}
-
+			// Validate required credentials for worker deployment
+			// Note: access_key_id and secret_access_key are NOT required for worker deployment
+			// They are only needed for S3-compatible API access, not for R2 bindings
 			if (
-				! config?.access_key_id ||
-				! config?.secret_access_key ||
+				! config?.account_id ||
+				! config?.api_token ||
 				! config?.bucket_name
 			) {
 				throw new Error(
 					__(
-						'R2 Access Key ID, Secret Access Key, and Bucket Name are required',
+						'Cloudflare Account ID, API Token, and Bucket Name are required to deploy the worker',
 						'aether-site-exporter-providers'
 					)
 				);
@@ -184,8 +177,6 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 					deploying ||
 					! config?.account_id ||
 					! config?.api_token ||
-					! config?.access_key_id ||
-					! config?.secret_access_key ||
 					! config?.bucket_name
 				}
 			>
@@ -237,113 +228,37 @@ function DeployWorkerButton( { providerId, config, onChange } ) {
 	);
 }
 
-// Store React roots and container elements for cleanup
-const reactRoots = new Map();
-const rootContainers = new Map();
-
 /**
  * Initialize modal hooks for Cloudflare R2 provider.
  *
- * Uses the field-level hook `aether.admin.provider.field.after` to inject
+ * Uses the field-level filter `aether.admin.provider.field.after` to inject
  * the Deploy Worker button after the `worker_endpoint` field.
  *
  * @param {string} providerIdPrefix Provider ID prefix to match (e.g., 'cloudflare-r2-static-site').
  */
 export function initCloudflareR2ModalHooks( providerIdPrefix ) {
-	// Hook into the field-level after action to add Deploy Worker button
+	// Hook into the field-level after filter to add Deploy Worker button
 	// after the worker_endpoint field
-	addAction(
+	addFilter(
 		'aether.admin.provider.field.after',
 		`aether/${ providerIdPrefix }/deploy-button`,
-		( context ) => {
+		( content, context ) => {
 			// Only add button after worker_endpoint field for matching provider
 			if (
 				context.fieldId !== 'worker_endpoint' ||
 				! context.providerId?.startsWith( providerIdPrefix )
 			) {
-				return;
+				return content;
 			}
 
-			// Store context values for the render callback
-			const { formValues, onFormChange, providerId } = context;
-
-			// Use requestAnimationFrame to ensure the field is in the DOM
-			requestAnimationFrame( () => {
-				// Find the worker_endpoint field container
-				// The field is wrapped in a div with class aether-provider-field
-				const fieldElements = document.querySelectorAll(
-					'.aether-provider-field'
-				);
-
-				let workerEndpointField = null;
-				fieldElements.forEach( ( el ) => {
-					// Check if this field has a label or input with worker_endpoint
-					const input = el.querySelector(
-						'input[id*="worker_endpoint"], input[name*="worker_endpoint"]'
-					);
-					const label = el.querySelector( 'label' );
-					if (
-						input ||
-						( label &&
-							label.textContent
-								?.toLowerCase()
-								.includes( 'worker' ) )
-					) {
-						workerEndpointField = el;
-					}
-				} );
-
-				if ( ! workerEndpointField ) {
-					return;
-				}
-
-				// Check if we already have a button container
-				const existingContainer = workerEndpointField.querySelector(
-					'.aether-deploy-worker-container'
-				);
-				if ( existingContainer ) {
-					return;
-				}
-
-				// Clean up previous render for this provider if it exists
-				const existingRoot = reactRoots.get( providerId );
-				const existingRootContainer = rootContainers.get( providerId );
-				if ( existingRoot ) {
-					try {
-						existingRoot.unmount();
-					} catch {
-						if (
-							existingRootContainer &&
-							existingRootContainer.parentNode
-						) {
-							existingRootContainer.parentNode.removeChild(
-								existingRootContainer
-							);
-						}
-					}
-					reactRoots.delete( providerId );
-					rootContainers.delete( providerId );
-				}
-
-				// Create a new container element for the Deploy Worker button
-				const rootElement = document.createElement( 'div' );
-				rootElement.className = 'aether-deploy-worker-container';
-				workerEndpointField.appendChild( rootElement );
-
-				// Create React 18 root and render
-				const root = createRoot( rootElement );
-				reactRoots.set( providerId, root );
-				rootContainers.set( providerId, rootElement );
-
-				// Pass formValues and onFormChange from the hook context
-				root.render(
-					<DeployWorkerButton
-						providerId={ providerId }
-						config={ formValues || {} }
-						onChange={ onFormChange }
-					/>
-				);
-			} );
+			// Return the DeployWorkerButton component
+			return (
+				<DeployWorkerButton
+					providerId={ context.providerId }
+					config={ context.formValues || {} }
+					onChange={ context.onFormChange }
+				/>
+			);
 		}
 	);
 }
