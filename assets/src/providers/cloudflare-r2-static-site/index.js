@@ -154,11 +154,11 @@ addFilter(
 		};
 
 		// Return new StorageService with the adapter
-		// Use worker_endpoint as "staticPath" for R2 (it's the base for URL building)
+		// Parameters: workerEndpoint, bucketName, config
 		return new StorageService(
 			effectiveConfig.worker_endpoint,
-			storageConfig,
-			uploadAdapter
+			effectiveConfig.bucket_name,
+			storageConfig
 		);
 	},
 	10

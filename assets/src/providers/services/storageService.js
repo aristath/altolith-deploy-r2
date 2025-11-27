@@ -34,6 +34,7 @@ export class StorageService {
 		this.workerEndpoint = workerEndpoint;
 		this.bucketName = bucketName;
 		this.config = config;
+		this.providerId = config.provider_id || '';
 	}
 
 	/**
@@ -171,11 +172,14 @@ export class StorageService {
 	/**
 	 * Download manifest file from storage.
 	 *
-	 * @param {string} siteKey Site key for manifest path.
+	 * Uses providerId from config to build manifest path, matching base plugin's interface.
+	 *
 	 * @return {Promise<Blob|null>} Manifest blob or null if not found.
 	 */
-	async downloadManifest( siteKey ) {
-		const manifestKey = `${ siteKey }/file-manifest.json`;
+	async downloadManifest() {
+		const manifestKey = this.providerId
+			? `file-manifest-${ this.providerId }.json`
+			: 'file-manifest.json';
 
 		try {
 			const blob = await downloadFileFromWorker(
@@ -192,12 +196,15 @@ export class StorageService {
 	/**
 	 * Upload manifest file to storage.
 	 *
-	 * @param {string} siteKey Site key for manifest path.
-	 * @param {Blob}   blob    Manifest blob to upload.
+	 * Uses providerId from config to build manifest path, matching base plugin's interface.
+	 *
+	 * @param {Blob} blob Manifest blob to upload.
 	 * @return {Promise<Object>} Result with success and optional error.
 	 */
-	async uploadManifest( siteKey, blob ) {
-		const manifestKey = `${ siteKey }/file-manifest.json`;
+	async uploadManifest( blob ) {
+		const manifestKey = this.providerId
+			? `file-manifest-${ this.providerId }.json`
+			: 'file-manifest.json';
 
 		const result = await this.upload( manifestKey, blob, {
 			contentType: 'application/json',
