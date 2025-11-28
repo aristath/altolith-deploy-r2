@@ -3,7 +3,7 @@
     "description": "Cloudflare R2 storage providers for Altolith Deploy",
     "type": "wordpress-plugin",
     "require": {
-        "php": ">=7.4"
+        "php": ">=8.1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*",
