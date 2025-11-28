@@ -89,9 +89,63 @@ class Plugin
 	{
 		// Initialize REST controllers.
 		$workerScriptController = new REST\WorkerScriptController();
+		$cloudflareProfileTestController = new REST\CloudflareProfileTestController();
 
 		// Register routes.
 		$workerScriptController->registerRoutes();
+		$cloudflareProfileTestController->registerRoutes();
+
+		// Register profile test filter handler.
+		$this->registerProfileTestHandler();
+	}
+
+	/**
+	 * Register profile test handler for Cloudflare credentials.
+	 *
+	 * This filter allows the base plugin's ProfilesController to delegate
+	 * testing to this plugin for Cloudflare credential profiles.
+	 *
+	 * @return void
+	 */
+	private function registerProfileTestHandler(): void
+	{
+		\add_filter('altolith_profile_test', function ($result, $profile, $profileId) {
+			// Only handle Cloudflare credentials profiles.
+			if (
+				$profile['category'] !== 'credentials' ||
+				$profile['type'] !== 'cloudflare'
+			) {
+				return $result;
+			}
+
+			// Get credentials from profile fields.
+			$accountId = $profile['fields']['account_id'] ?? '';
+			$apiToken = $profile['fields']['api_token'] ?? '';
+
+			if (empty($accountId) || empty($apiToken)) {
+				return [
+					'success' => false,
+					'message' => \__('Account ID and API Token are required.', 'altolith-deploy-r2'),
+				];
+			}
+
+			// Test credentials via the controller.
+			$controller = new REST\CloudflareProfileTestController();
+			$request = new \WP_REST_Request('POST');
+			$request->set_param('account_id', $accountId);
+			$request->set_param('api_token', $apiToken);
+
+			$response = $controller->testCredentials($request);
+
+			if (\is_wp_error($response)) {
+				return [
+					'success' => false,
+					'message' => $response->get_error_message(),
+				];
+			}
+
+			return $response->get_data();
+		}, 10, 3);
 	}
 
 	/**
