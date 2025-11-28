@@ -67,7 +67,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="altolith-site-exporter-providers"/>
+				<element value="altolith-deploy-r2"/>
 			</property>
 		</properties>
 	</rule>
