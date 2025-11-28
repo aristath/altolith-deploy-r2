@@ -65,8 +65,16 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 
 	if ( errorType === 'worker_deployment' ) {
 		return (
-			<div style={ containerStyle }>
+			<div
+				className={ `altolith-deployment-error-help altolith-deployment-error-help--worker${
+					isExpanded
+						? ' altolith-deployment-error-help--expanded'
+						: ''
+				}` }
+				style={ containerStyle }
+			>
 				<Button
+					className="altolith-deployment-error-help__toggle"
 					variant="link"
 					onClick={ () => setIsExpanded( ! isExpanded ) }
 					style={ toggleButtonStyle }
@@ -78,23 +86,37 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 				</Button>
 
 				{ isExpanded && (
-					<div style={ contentStyle }>
-						<p style={ { margin: '0 0 0.5rem' } }>
+					<div
+						className="altolith-deployment-error-help__content"
+						style={ contentStyle }
+					>
+						<p
+							className="altolith-deployment-error-help__text"
+							style={ { margin: '0 0 0.5rem' } }
+						>
 							{ __(
 								'If automatic deployment fails, you can deploy the worker manually:',
 								'altolith-deploy-r2'
 							) }
 						</p>
-						<ol style={ listStyle }>
+						<ol
+							className="altolith-deployment-error-help__steps"
+							style={ listStyle }
+						>
 							{ MANUAL_WORKER_DEPLOYMENT.steps.map(
 								( step, index ) => (
-									<li key={ index } style={ listItemStyle }>
+									<li
+										key={ index }
+										className="altolith-deployment-error-help__step-item"
+										style={ listItemStyle }
+									>
 										{ step }
 									</li>
 								)
 							) }
 						</ol>
 						<ExternalLink
+							className="altolith-deployment-error-help__link"
 							href={ MANUAL_WORKER_DEPLOYMENT.workersUrl }
 						>
 							{ __(
@@ -103,7 +125,10 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 							) }
 						</ExternalLink>
 						{ ' | ' }
-						<ExternalLink href={ CLOUDFLARE_DOCS.workersBindings }>
+						<ExternalLink
+							className="altolith-deployment-error-help__link"
+							href={ CLOUDFLARE_DOCS.workersBindings }
+						>
 							{ __(
 								'View Bindings Documentation',
 								'altolith-deploy-r2'
@@ -117,8 +142,16 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 
 	if ( errorType === 'domain_attachment' ) {
 		return (
-			<div style={ containerStyle }>
+			<div
+				className={ `altolith-deployment-error-help altolith-deployment-error-help--domain${
+					isExpanded
+						? ' altolith-deployment-error-help--expanded'
+						: ''
+				}` }
+				style={ containerStyle }
+			>
 				<Button
+					className="altolith-deployment-error-help__toggle"
 					variant="link"
 					onClick={ () => setIsExpanded( ! isExpanded ) }
 					style={ toggleButtonStyle }
@@ -133,17 +166,30 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 				</Button>
 
 				{ isExpanded && (
-					<div style={ contentStyle }>
-						<p style={ { margin: '0 0 0.5rem' } }>
+					<div
+						className="altolith-deployment-error-help__content"
+						style={ contentStyle }
+					>
+						<p
+							className="altolith-deployment-error-help__text"
+							style={ { margin: '0 0 0.5rem' } }
+						>
 							{ __(
 								'If custom domain attachment fails, configure it manually:',
 								'altolith-deploy-r2'
 							) }
 						</p>
-						<ol style={ listStyle }>
+						<ol
+							className="altolith-deployment-error-help__steps"
+							style={ listStyle }
+						>
 							{ MANUAL_DOMAIN_ATTACHMENT.steps.map(
 								( step, index ) => (
-									<li key={ index } style={ listItemStyle }>
+									<li
+										key={ index }
+										className="altolith-deployment-error-help__step-item"
+										style={ listItemStyle }
+									>
 										{ index === 4 && hostname
 											? `${ step }: ${ hostname }`
 											: step }
@@ -151,10 +197,16 @@ export function DeploymentErrorHelp( { errorType, hostname } ) {
 								)
 							) }
 						</ol>
-						<p style={ noteStyle }>
+						<p
+							className="altolith-deployment-error-help__note"
+							style={ noteStyle }
+						>
 							{ MANUAL_DOMAIN_ATTACHMENT.note }
 						</p>
-						<ExternalLink href={ MANUAL_DOMAIN_ATTACHMENT.docsUrl }>
+						<ExternalLink
+							className="altolith-deployment-error-help__link"
+							href={ MANUAL_DOMAIN_ATTACHMENT.docsUrl }
+						>
 							{ __(
 								'View Custom Domains Documentation',
 								'altolith-deploy-r2'

@@ -164,17 +164,30 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 		>
 			<div className="altolith-manual-worker-modal__content">
 				{ /* Step 1: Create Worker */ }
-				<div style={ sectionStyle }>
-					<h3 style={ headingStyle }>
+				<div
+					className="altolith-manual-worker-modal__section"
+					style={ sectionStyle }
+				>
+					<h3
+						className="altolith-manual-worker-modal__heading"
+						style={ headingStyle }
+					>
 						{ __(
 							'Step 1: Create a Worker',
 							'altolith-deploy-r2'
 						) }
 					</h3>
-					<ol style={ listStyle }>
-						<li style={ listItemStyle }>
+					<ol
+						className="altolith-manual-worker-modal__steps"
+						style={ listStyle }
+					>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __( 'Go to', 'altolith-deploy-r2' ) }{ ' ' }
 							<a
+								className="altolith-manual-worker-modal__link"
 								href="https://dash.cloudflare.com/?to=/:account/workers-and-pages"
 								target="_blank"
 								rel="noopener noreferrer"
@@ -182,19 +195,28 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 								Cloudflare Dashboard &gt; Workers & Pages
 							</a>
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Create" and select "Create Worker"',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Name your worker (e.g., "altolith-r2-mysite")',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Deploy" to create the worker with default code',
 								'altolith-deploy-r2'
@@ -204,50 +226,78 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 				</div>
 
 				{ /* Step 2: Add R2 Binding */ }
-				<div style={ sectionStyle }>
-					<h3 style={ headingStyle }>
+				<div
+					className="altolith-manual-worker-modal__section"
+					style={ sectionStyle }
+				>
+					<h3
+						className="altolith-manual-worker-modal__heading"
+						style={ headingStyle }
+					>
 						{ __(
 							'Step 2: Add R2 Bucket Binding',
 							'altolith-deploy-r2'
 						) }
 					</h3>
-					<ol style={ listStyle }>
-						<li style={ listItemStyle }>
+					<ol
+						className="altolith-manual-worker-modal__steps"
+						style={ listStyle }
+					>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'In your worker, go to Settings > Variables',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Scroll down to "R2 Bucket Bindings"',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Add binding"',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							<strong>
 								{ __( 'Variable name:', 'altolith-deploy-r2' ) }
 							</strong>{ ' ' }
-							<code>R2_BUCKET</code>{ ' ' }
+							<code className="altolith-manual-worker-modal__code">
+								R2_BUCKET
+							</code>{ ' ' }
 							{ __(
 								'(must be exactly this name)',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							<strong>
 								{ __( 'R2 bucket:', 'altolith-deploy-r2' ) }
 							</strong>{ ' ' }
 							{ bucketName ? (
 								<>
 									{ __( 'Select', 'altolith-deploy-r2' ) }{ ' ' }
-									<code>{ bucketName }</code>
+									<code className="altolith-manual-worker-modal__code">
+										{ bucketName }
+									</code>
 								</>
 							) : (
 								__(
@@ -256,7 +306,10 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 								)
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Save" to save the binding',
 								'altolith-deploy-r2'
@@ -266,27 +319,45 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 				</div>
 
 				{ /* Step 3: Replace Worker Code */ }
-				<div style={ sectionStyle }>
-					<h3 style={ headingStyle }>
+				<div
+					className="altolith-manual-worker-modal__section"
+					style={ sectionStyle }
+				>
+					<h3
+						className="altolith-manual-worker-modal__heading"
+						style={ headingStyle }
+					>
 						{ __(
 							'Step 3: Replace Worker Code',
 							'altolith-deploy-r2'
 						) }
 					</h3>
-					<ol style={ listStyle }>
-						<li style={ listItemStyle }>
+					<ol
+						className="altolith-manual-worker-modal__steps"
+						style={ listStyle }
+					>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Go to your worker\'s "Code" tab',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Delete all existing code',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Paste the code below:',
 								'altolith-deploy-r2'
@@ -294,11 +365,17 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 						</li>
 					</ol>
 
-					<div style={ codeBlockStyle }>
+					<div
+						className="altolith-manual-worker-modal__code-block"
+						style={ codeBlockStyle }
+					>
 						{ isLoading && (
-							<div style={ loadingStyle }>
+							<div
+								className="altolith-manual-worker-modal__loading"
+								style={ loadingStyle }
+							>
 								<Spinner />
-								<span>
+								<span className="altolith-manual-worker-modal__loading-text">
 									{ __(
 										'Loading worker code…',
 										'altolith-deploy-r2'
@@ -307,14 +384,22 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 							</div>
 						) }
 						{ error && (
-							<Notice status="error" isDismissible={ false }>
+							<Notice
+								className="altolith-manual-worker-modal__error"
+								status="error"
+								isDismissible={ false }
+							>
 								{ error }
 							</Notice>
 						) }
 						{ ! isLoading && ! error && workerCode && (
 							<>
-								<div style={ copyButtonContainerStyle }>
+								<div
+									className="altolith-manual-worker-modal__copy-button-container"
+									style={ copyButtonContainerStyle }
+								>
 									<Button
+										className="altolith-manual-worker-modal__copy-button"
 										variant="secondary"
 										onClick={ handleCopyCode }
 										disabled={ copied }
@@ -331,6 +416,7 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 									</Button>
 								</div>
 								<TextareaControl
+									className="altolith-manual-worker-modal__code-textarea"
 									value={ workerCode }
 									readOnly
 									rows={ 15 }
@@ -347,27 +433,45 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 				</div>
 
 				{ /* Step 4: Deploy and Copy URL */ }
-				<div style={ sectionStyle }>
-					<h3 style={ headingStyle }>
+				<div
+					className="altolith-manual-worker-modal__section"
+					style={ sectionStyle }
+				>
+					<h3
+						className="altolith-manual-worker-modal__heading"
+						style={ headingStyle }
+					>
 						{ __(
 							'Step 4: Deploy and Copy URL',
 							'altolith-deploy-r2'
 						) }
 					</h3>
-					<ol style={ listStyle }>
-						<li style={ listItemStyle }>
+					<ol
+						className="altolith-manual-worker-modal__steps"
+						style={ listStyle }
+					>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Save and Deploy" to deploy your worker',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Copy the worker URL (e.g., https://altolith-r2-mysite.your-subdomain.workers.dev)',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-manual-worker-modal__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Paste it in the "Worker Endpoint URL" field in this form',
 								'altolith-deploy-r2'
@@ -377,7 +481,11 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 				</div>
 
 				{ /* Important Note */ }
-				<Notice status="info" isDismissible={ false }>
+				<Notice
+					className="altolith-manual-worker-modal__important-notice"
+					status="info"
+					isDismissible={ false }
+				>
 					<strong>
 						{ __( 'Important:', 'altolith-deploy-r2' ) }
 					</strong>{ ' ' }
@@ -387,12 +495,16 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 					) }
 				</Notice>
 
-				<div style={ noteStyle }>
+				<div
+					className="altolith-manual-worker-modal__help-note"
+					style={ noteStyle }
+				>
 					<strong>
 						{ __( 'Need more help?', 'altolith-deploy-r2' ) }
 					</strong>
 					<br />
 					<a
+						className="altolith-manual-worker-modal__link"
 						href={ CLOUDFLARE_DOCS.workersBindings }
 						target="_blank"
 						rel="noopener noreferrer"
@@ -404,6 +516,7 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 					</a>
 					{ ' | ' }
 					<a
+						className="altolith-manual-worker-modal__link"
 						href={ CLOUDFLARE_DOCS.r2Overview }
 						target="_blank"
 						rel="noopener noreferrer"
@@ -414,13 +527,18 @@ export function ManualWorkerSetupModal( { isOpen, onClose, bucketName } ) {
 
 				{ /* Close Button */ }
 				<div
+					className="altolith-manual-worker-modal__actions"
 					style={ {
 						marginTop: '1.5rem',
 						display: 'flex',
 						justifyContent: 'flex-end',
 					} }
 				>
-					<Button variant="primary" onClick={ onClose }>
+					<Button
+						className="altolith-manual-worker-modal__close-button"
+						variant="primary"
+						onClick={ onClose }
+					>
 						{ __( 'Close', 'altolith-deploy-r2' ) }
 					</Button>
 				</div>

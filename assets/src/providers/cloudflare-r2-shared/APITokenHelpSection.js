@@ -57,8 +57,14 @@ export function APITokenHelpSection() {
 	};
 
 	return (
-		<div style={ containerStyle }>
+		<div
+			className={ `altolith-api-token-help${
+				isExpanded ? ' altolith-api-token-help--expanded' : ''
+			}` }
+			style={ containerStyle }
+		>
 			<Button
+				className="altolith-api-token-help__toggle"
 				variant="link"
 				onClick={ () => setIsExpanded( ! isExpanded ) }
 				style={ toggleButtonStyle }
@@ -70,47 +76,78 @@ export function APITokenHelpSection() {
 			</Button>
 
 			{ isExpanded && (
-				<div style={ contentStyle }>
-					<ol style={ listStyle }>
-						<li style={ listItemStyle }>
+				<div
+					className="altolith-api-token-help__content"
+					style={ contentStyle }
+				>
+					<ol
+						className="altolith-api-token-help__steps"
+						style={ listStyle }
+					>
+						<li
+							className="altolith-api-token-help__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Go to Cloudflare Dashboard > My Profile > API Tokens',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-api-token-help__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Click "Create Token"',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-api-token-help__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Select "Create Custom Token"',
 								'altolith-deploy-r2'
 							) }
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-api-token-help__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Add these permissions:',
 								'altolith-deploy-r2'
 							) }
-							<ul style={ nestedListStyle }>
-								<li>Account &gt; Workers Scripts &gt; Edit</li>
-								<li>Account &gt; Workers Routes &gt; Edit</li>
-								<li>
+							<ul
+								className="altolith-api-token-help__permissions"
+								style={ nestedListStyle }
+							>
+								<li className="altolith-api-token-help__permission-item">
+									Account &gt; Workers Scripts &gt; Edit
+								</li>
+								<li className="altolith-api-token-help__permission-item">
+									Account &gt; Workers Routes &gt; Edit
+								</li>
+								<li className="altolith-api-token-help__permission-item">
 									Zone &gt; Zone &gt; Read (select your zones)
 								</li>
 							</ul>
 						</li>
-						<li style={ listItemStyle }>
+						<li
+							className="altolith-api-token-help__step-item"
+							style={ listItemStyle }
+						>
 							{ __(
 								'Create the token and copy it here',
 								'altolith-deploy-r2'
 							) }
 						</li>
 					</ol>
-					<ExternalLink href={ CLOUDFLARE_DOCS.createApiToken }>
+					<ExternalLink
+						className="altolith-api-token-help__link"
+						href={ CLOUDFLARE_DOCS.createApiToken }
+					>
 						{ __(
 							'View Cloudflare Documentation',
 							'altolith-deploy-r2'

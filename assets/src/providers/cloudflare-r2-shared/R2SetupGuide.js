@@ -57,12 +57,21 @@ export function R2SetupGuide() {
 	};
 
 	return (
-		<div style={ containerStyle }>
-			<div style={ headerStyle }>
-				<strong>
+		<div
+			className={ `altolith-r2-setup-guide${
+				isExpanded ? ' altolith-r2-setup-guide--expanded' : ''
+			}` }
+			style={ containerStyle }
+		>
+			<div
+				className="altolith-r2-setup-guide__header"
+				style={ headerStyle }
+			>
+				<strong className="altolith-r2-setup-guide__title">
 					{ __( 'Before you begin', 'altolith-deploy-r2' ) }
 				</strong>
 				<Button
+					className="altolith-r2-setup-guide__toggle"
 					variant="link"
 					onClick={ () => setIsExpanded( ! isExpanded ) }
 					style={ toggleButtonStyle }
@@ -75,20 +84,32 @@ export function R2SetupGuide() {
 			</div>
 
 			{ ! isExpanded && (
-				<p style={ { margin: '0.5rem 0 0', fontSize: '13px' } }>
+				<p
+					className="altolith-r2-setup-guide__summary"
+					style={ { margin: '0.5rem 0 0', fontSize: '13px' } }
+				>
 					{ __(
 						'You need a Cloudflare API token with R2, Workers, and Zone permissions.',
 						'altolith-deploy-r2'
 					) }{ ' ' }
-					<ExternalLink href={ REQUIRED_PERMISSIONS.createTokenUrl }>
+					<ExternalLink
+						className="altolith-r2-setup-guide__link"
+						href={ REQUIRED_PERMISSIONS.createTokenUrl }
+					>
 						{ __( 'Create API Token', 'altolith-deploy-r2' ) }
 					</ExternalLink>
 				</p>
 			) }
 
 			{ isExpanded && (
-				<div style={ contentStyle }>
-					<p style={ { margin: '0 0 0.5rem' } }>
+				<div
+					className="altolith-r2-setup-guide__content"
+					style={ contentStyle }
+				>
+					<p
+						className="altolith-r2-setup-guide__intro"
+						style={ { margin: '0 0 0.5rem' } }
+					>
 						{ __(
 							'Create a Cloudflare API token with these permissions:',
 							'altolith-deploy-r2'
@@ -98,9 +119,11 @@ export function R2SetupGuide() {
 						( section, sectionIndex ) => (
 							<div
 								key={ sectionIndex }
+								className="altolith-r2-setup-guide__section"
 								style={ { marginBottom: '0.5rem' } }
 							>
 								<strong
+									className="altolith-r2-setup-guide__section-title"
 									style={ {
 										fontSize: '12px',
 										color: '#50575e',
@@ -108,14 +131,20 @@ export function R2SetupGuide() {
 								>
 									{ section.title }
 								</strong>
-								<ul style={ listStyle }>
+								<ul
+									className="altolith-r2-setup-guide__list"
+									style={ listStyle }
+								>
 									{ section.items.map(
 										( item, itemIndex ) => (
 											<li
 												key={ itemIndex }
+												className="altolith-r2-setup-guide__list-item"
 												style={ listItemStyle }
 											>
-												<code>{ item.permission }</code>
+												<code className="altolith-r2-setup-guide__permission">
+													{ item.permission }
+												</code>
 												{ ' - ' }
 												{ item.description }
 											</li>
@@ -125,8 +154,12 @@ export function R2SetupGuide() {
 							</div>
 						)
 					) }
-					<p style={ { margin: 0 } }>
+					<p
+						className="altolith-r2-setup-guide__footer"
+						style={ { margin: 0 } }
+					>
 						<ExternalLink
+							className="altolith-r2-setup-guide__link"
 							href={ REQUIRED_PERMISSIONS.createTokenUrl }
 						>
 							{ __(
