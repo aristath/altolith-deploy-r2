@@ -151,8 +151,7 @@ class Plugin
 	/**
 	 * Enqueue provider JavaScript files on settings page.
 	 *
-	 * Provider scripts register hooks (altolith.provider.upload, altolith.provider.test, etc.)
-	 * that are used by the base plugin's JavaScript code.
+	 * Provider scripts register providers and hooks that integrate with the base plugin.
 	 *
 	 * @param string $hook Current admin page hook.
 	 * @return void

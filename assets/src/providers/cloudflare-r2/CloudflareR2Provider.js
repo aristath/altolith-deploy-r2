@@ -10,6 +10,8 @@
 
 import { __ } from '@wordpress/i18n';
 import { getOutputTypeFields } from '@altolith/utils/outputTypes';
+import { StorageService } from '../services/storageService';
+import { uploadFile as uploadToWorker } from '../../utils/workerEndpointClient';
 
 /**
  * CloudflareR2Provider class
@@ -149,44 +151,6 @@ export class CloudflareR2Provider {
 				'altolith-deploy-r2'
 			),
 		},
-		{
-			id: 'access_key_id',
-			label: __( 'R2 Access Key ID', 'altolith-deploy-r2' ),
-			type: 'text',
-			required: false,
-			sensitive: true,
-			help: __(
-				'Only required for S3-compatible API access, not for Worker-based uploads.',
-				'altolith-deploy-r2'
-			),
-			validation: {
-				minLength: 16,
-				maxLength: 128,
-				message: __(
-					'Access Key ID must be between 16 and 128 characters',
-					'altolith-deploy-r2'
-				),
-			},
-		},
-		{
-			id: 'secret_access_key',
-			label: __( 'R2 Secret Access Key', 'altolith-deploy-r2' ),
-			type: 'text',
-			required: false,
-			sensitive: true,
-			help: __(
-				'Only required for S3-compatible API access, not for Worker-based uploads.',
-				'altolith-deploy-r2'
-			),
-			validation: {
-				minLength: 32,
-				maxLength: 128,
-				message: __(
-					'Secret Access Key must be between 32 and 128 characters',
-					'altolith-deploy-r2'
-				),
-			},
-		},
 	];
 
 	/**
@@ -202,6 +166,122 @@ export class CloudflareR2Provider {
 		const outputTypeFields = getOutputTypeFields();
 
 		return [ ...coreFields, ...outputTypeFields ];
+	}
+
+	/**
+	 * Test connection to the provider.
+	 *
+	 * This method is called by the ProviderSettings component when the user
+	 * clicks the "Test Connection" button. It creates a storage service and
+	 * tests the connection.
+	 *
+	 * @param {Object} config Provider configuration object.
+	 * @return {Promise<Object>} Test result with success and optional error message.
+	 */
+	static async testConnection( config ) {
+		if ( ! config?.worker_endpoint || ! config?.bucket_name ) {
+			return {
+				success: false,
+				error: __(
+					'Storage service not configured. Please set worker_endpoint and bucket_name.',
+					'altolith-deploy-r2'
+				),
+			};
+		}
+
+		// Create upload adapter
+		const storageConfig = {
+			public_url: config.public_url || null,
+			path: config.path || '',
+		};
+
+		const uploadAdapter = {
+			async upload( key, file, options = {} ) {
+				let fileToUpload = file;
+
+				// Handle server-side files (blueprint bundles)
+				if (
+					file.size === 0 &&
+					( options.sourceUrl || options.sourcePath )
+				) {
+					let sourceUrl = options.sourceUrl;
+					if ( ! sourceUrl && options.sourcePath ) {
+						const siteUrl =
+							options.metadata?.siteUrl ||
+							window.location.origin;
+						const encodedPath = encodeURIComponent(
+							options.sourcePath
+						);
+						sourceUrl = `${ siteUrl }/wp-json/altolith/deploy/export-file?path=${ encodedPath }`;
+					}
+
+					if ( sourceUrl ) {
+						try {
+							const nonce =
+								typeof window !== 'undefined' &&
+								window.altolithData?.nonce
+									? window.altolithData.nonce
+									: '';
+
+							const headers = {
+								'Content-Type': 'application/octet-stream',
+							};
+
+							if ( nonce ) {
+								headers[ 'X-WP-Nonce' ] = nonce;
+							}
+
+							const response = await fetch( sourceUrl, {
+								credentials: 'same-origin',
+								headers,
+							} );
+
+							if ( ! response.ok ) {
+								return {
+									success: false,
+									error: `Failed to fetch server-side file: ${ response.statusText }`,
+								};
+							}
+
+							fileToUpload = await response.blob();
+						} catch ( error ) {
+							return {
+								success: false,
+								error: `Failed to fetch server-side file: ${ error.message }`,
+							};
+						}
+					}
+				}
+
+				// Apply path prefix if configured
+				const pathPrefix = storageConfig.path || '';
+				const fullKey = pathPrefix
+					? pathPrefix.replace( /\/$/, '' ) +
+					  '/' +
+					  key.replace( /^\//, '' )
+					: key;
+
+				return uploadToWorker(
+					config.worker_endpoint,
+					fullKey,
+					fileToUpload,
+					{
+						contentType: options.contentType || fileToUpload.type,
+					}
+				);
+			},
+		};
+
+		// Create storage service
+		const storage = new StorageService(
+			config.worker_endpoint,
+			config.bucket_name,
+			storageConfig,
+			uploadAdapter
+		);
+
+		// Test connection
+		return await storage.testConnection();
 	}
 }
 

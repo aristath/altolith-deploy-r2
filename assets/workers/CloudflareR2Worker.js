@@ -149,7 +149,7 @@ export default {
 				return handleChunkUpload( request, env, debugInfo, startTime );
 			}
 
-			// Fall through to single-file upload (legacy)
+			// Single-file upload
 
 			// Get R2 key from header (decode URI-encoded non-ASCII characters)
 			const encodedR2Key = request.headers.get( 'X-R2-Key' );

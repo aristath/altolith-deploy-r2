@@ -65,7 +65,6 @@ export function createErrorResponse( error, errors = null ) {
  * Normalize a response to standard format.
  *
  * Takes various response formats and converts to standard format.
- * Handles legacy formats for migration.
  *
  * @param {Object} response Response to normalize.
  * @return {Object} Normalized response in standard format.
@@ -80,19 +79,19 @@ export function normalizeResponse( response ) {
 		return response;
 	}
 
-	// Legacy format with error field
+	// Format with error field
 	if ( response && response.error ) {
 		return createErrorResponse( response.error, response.errors );
 	}
 
-	// Legacy format with success=true but no data field
+	// Format with success=true but no data field
 	if ( response && response.success === true ) {
 		// Extract data from non-standard fields
 		const { success, error, errors, ...data } = response;
 		return createSuccessResponse( data );
 	}
 
-	// Legacy format with success=false
+	// Format with success=false
 	if ( response && response.success === false ) {
 		return createErrorResponse(
 			response.message || response.error || 'Operation failed',

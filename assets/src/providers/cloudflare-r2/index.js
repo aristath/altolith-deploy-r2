@@ -13,49 +13,21 @@
  * @package
  */
 
-import { addFilter, addAction, doAction } from '@wordpress/hooks';
+import { addFilter, doAction } from '@wordpress/hooks';
 import { CloudflareR2Provider } from './CloudflareR2Provider';
 
 // Register Cloudflare credentials profile type
 import '../../profiles';
 import { initCloudflareR2ModalHooks } from './modal-hooks';
 import ProviderRegistry from '@altolith/providers/registry/ProviderRegistry';
-import apiFetch from '../../utils/api';
 import { StorageService } from '../services/storageService';
 import { uploadFile as uploadToWorker } from '../../utils/workerEndpointClient';
-
-/**
- * Load provider configuration from REST API.
- *
- * @param {string} providerId Provider instance ID.
- * @return {Promise<Object>} Provider configuration or empty object.
- */
-async function loadProviderConfig( providerId ) {
-	try {
-		const response = await apiFetch( {
-			path: `/altolith/deploy/providers/${ providerId }/config`,
-			method: 'GET',
-		} );
-		return response.config || {};
-	} catch ( error ) {
-		if (
-			error.code === 'restProviderNotConfigured' ||
-			error.status === 404
-		) {
-			return {};
-		}
-		throw error;
-	}
-}
 
 // Register provider class in JavaScript registry
 ProviderRegistry.register( CloudflareR2Provider.ID, CloudflareR2Provider );
 
 // Also trigger the hook for any listeners
 doAction( 'altolith.providers.register', CloudflareR2Provider );
-
-// Track processed files per provider to avoid duplicate processing
-const processedFiles = new Map();
 
 /**
  * Create upload adapter for Cloudflare R2.
@@ -155,38 +127,6 @@ function createUploadAdapter( workerEndpoint, storageConfig ) {
 }
 
 /**
- * Get storage service for a provider instance.
- *
- * @param {string} providerId Provider instance ID.
- * @return {Promise<StorageService|null>} Storage service or null if not configured.
- */
-async function getStorageService( providerId ) {
-	const config = await loadProviderConfig( providerId );
-
-	if ( ! config?.worker_endpoint || ! config?.bucket_name ) {
-		return null;
-	}
-
-	const storageConfig = {
-		public_url: config.public_url || null,
-		provider_id: providerId,
-		path: config.path || '',
-	};
-
-	const uploadAdapter = createUploadAdapter(
-		config.worker_endpoint,
-		storageConfig
-	);
-
-	return new StorageService(
-		config.worker_endpoint,
-		config.bucket_name,
-		storageConfig,
-		uploadAdapter
-	);
-}
-
-/**
  * Register storage service creation filter.
  *
  * This filter intercepts storage service creation for cloudflare-r2
@@ -235,176 +175,6 @@ addFilter(
 			storageConfig,
 			uploadAdapter
 		);
-	},
-	10
-);
-
-/**
- * Handle unified file upload for R2 provider.
- *
- * Handles both static site files and blueprint bundle uploads based on fileType.
- *
- * @param {Object} fileContext Unified file context from altolith.file.upload action.
- * @return {Promise<void>}
- */
-async function handleUnifiedFileUpload( fileContext ) {
-	const { fileType, providerId, filePath, storageKey } = fileContext;
-
-	// Only handle requests for cloudflare-r2 providers
-	if ( ! providerId || ! providerId.startsWith( 'cloudflare-r2:' ) ) {
-		return;
-	}
-
-	// Create a unique key for this file+provider combination
-	const fileKey = `${ providerId }:${ storageKey || filePath }`;
-
-	// Check if file is already processed or in progress
-	const existingEntry = processedFiles.get( fileKey );
-	if ( existingEntry === true ) {
-		return;
-	}
-	if ( existingEntry instanceof Promise ) {
-		try {
-			await existingEntry;
-		} catch {
-			if ( processedFiles.get( fileKey ) === existingEntry ) {
-				processedFiles.delete( fileKey );
-			}
-		}
-		if ( processedFiles.get( fileKey ) === true ) {
-			return;
-		}
-	}
-
-	const processingPromise = ( async () => {
-		try {
-			const storage = await getStorageService( providerId );
-			if ( ! storage ) {
-				throw new Error(
-					'Storage service not available. Please configure worker_endpoint and bucket_name.'
-				);
-			}
-
-			if ( ! filePath ) {
-				throw new Error( 'File path is required' );
-			}
-
-			// Handle blueprint bundle uploads (server-side files)
-			if ( fileType === 'blueprint-bundle' ) {
-				if (
-					! filePath.startsWith( 'http://' ) &&
-					! filePath.startsWith( 'https://' )
-				) {
-					throw new Error(
-						'Blueprint bundle must be provided as a URL for R2 uploads'
-					);
-				}
-
-				const response = await fetch( filePath, {
-					method: 'GET',
-					credentials: 'omit',
-				} );
-				if ( ! response.ok ) {
-					throw new Error(
-						`Failed to fetch blueprint bundle: HTTP ${ response.status }`
-					);
-				}
-
-				// Get bundle path from config or use default
-				const config = await loadProviderConfig( providerId );
-				const blueprintSubfolder =
-					config?.blueprint_subfolder || 'playground';
-				const bundleKey =
-					storageKey || `${ blueprintSubfolder }/bundle.zip`;
-
-				const result = await storage.upload(
-					bundleKey,
-					await response.blob(),
-					{
-						contentType: 'application/zip',
-					}
-				);
-
-				if ( ! result.success ) {
-					throw new Error(
-						result.error || 'Blueprint bundle upload failed'
-					);
-				}
-
-				fileContext.result = { success: true, url: result.url };
-			}
-			// Static site files are handled via the storage service filter
-		} catch ( error ) {
-			fileContext.result = {
-				success: false,
-				error: error.message || 'Unknown error',
-			};
-			throw error;
-		}
-		processedFiles.set( fileKey, true );
-	} )().catch( ( error ) => {
-		if ( processedFiles.get( fileKey ) === processingPromise ) {
-			processedFiles.delete( fileKey );
-		}
-		throw error;
-	} );
-
-	processedFiles.set( fileKey, processingPromise );
-	await processingPromise;
-}
-
-/**
- * Register unified file upload action hook.
- */
-addAction(
-	'altolith.file.upload',
-	'altolith/cloudflare-r2',
-	( fileContext ) => {
-		if ( ! fileContext._uploadPromises ) {
-			fileContext._uploadPromises = [];
-		}
-		fileContext._uploadPromises.push(
-			handleUnifiedFileUpload( fileContext )
-		);
-	},
-	10
-);
-
-/**
- * Register test connection handler hook.
- */
-addFilter(
-	'altolith.provider.test',
-	'altolith/cloudflare-r2',
-	( handler, providerId ) => {
-		if ( ! providerId?.startsWith( 'cloudflare-r2:' ) ) {
-			return handler;
-		}
-		return async () => {
-			const storage = await getStorageService( providerId );
-			if ( ! storage ) {
-				return {
-					success: false,
-					error: 'Storage service not configured. Please set worker_endpoint and bucket_name.',
-				};
-			}
-			return storage.testConnection();
-		};
-	},
-	10
-);
-
-/**
- * Register upload strategy filter.
- */
-addFilter(
-	'altolith.provider.upload_strategy',
-	'altolith/cloudflare-r2',
-	( strategy, providerId ) => {
-		if ( providerId?.startsWith( 'cloudflare-r2:' ) ) {
-			return 'worker';
-		}
-		return strategy;
 	},
 	10
 );
