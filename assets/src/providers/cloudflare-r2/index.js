@@ -101,8 +101,25 @@ function createUploadAdapter( workerEndpoint, storageConfig ) {
 
 				if ( sourceUrl ) {
 					try {
+						// Get nonce for authenticated request
+						const nonce =
+							typeof window !== 'undefined' &&
+							window.altolithData?.nonce
+								? window.altolithData.nonce
+								: '';
+
+						const headers = {
+							'Content-Type': 'application/octet-stream',
+						};
+
+						// Add nonce header for WordPress REST API authentication
+						if ( nonce ) {
+							headers[ 'X-WP-Nonce' ] = nonce;
+						}
+
 						const response = await fetch( sourceUrl, {
 							credentials: 'same-origin',
+							headers,
 						} );
 
 						if ( ! response.ok ) {
