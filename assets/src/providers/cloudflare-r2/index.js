@@ -378,6 +378,32 @@ addFilter(
 );
 
 /**
+ * Register blueprint path filter for cloudflare-r2 provider.
+ *
+ * Uses the blueprint_subfolder config field if available, otherwise returns
+ * the default path unchanged.
+ */
+addFilter(
+	'altolith.blueprint.path',
+	'altolith/cloudflare-r2',
+	( path, providerConfig, providerId ) => {
+		// Only handle this provider type
+		if ( ! providerId?.startsWith( 'cloudflare-r2:' ) ) {
+			return path;
+		}
+
+		// Use blueprint_subfolder from config if available
+		if ( providerConfig?.blueprint_subfolder ) {
+			return providerConfig.blueprint_subfolder;
+		}
+
+		// Return default path unchanged
+		return path;
+	},
+	10
+);
+
+/**
  * Register URL rewriting filter for path prefix support.
  *
  * When a path prefix is configured (e.g., "new-site/"), this filter ensures
